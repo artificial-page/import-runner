@@ -1,6 +1,6 @@
 {
   "name": "import-runner",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Dynamically import and run functions (even on client side!)",
   "main": "./dist/cjs-ts/importRunner.js",
   "scripts": {
