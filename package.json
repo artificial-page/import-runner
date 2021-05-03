@@ -1,0 +1,55 @@
+{
+  "name": "ts-base",
+  "version": "0.0.1",
+  "description": "TypeScript base project",
+  "private": true,
+  "bin": {},
+  "scripts": {
+    "build": "./bin/build",
+    "postinstall": "husky install; npm run build",
+    "start": "./bin/watch",
+    "test": "NODE_ENV=\"${NODE_ENV:-test}\" mocha",
+    "update": "ncu -u"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/winton/ts-base.git"
+  },
+  "author": "Winton Welsh <mail@wintoni.us>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/winton/ts-base/issues"
+  },
+  "homepage": "https://github.com/winton/ts-base#readme",
+  "devDependencies": {
+    "@types/fs-extra": "9.0.10",
+    "@types/mocha": "8.2.2",
+    "@types/node": "14.14.37",
+    "@typescript-eslint/eslint-plugin": "4.21.0",
+    "@typescript-eslint/parser": "4.21.0",
+    "eslint": "7.23.0",
+    "eslint-config-prettier": "8.1.0",
+    "eslint-plugin-prettier": "3.3.1",
+    "expect": "26.6.2",
+    "husky": "6.0.0",
+    "lint-staged": "10.5.4",
+    "mocha": "8.3.2",
+    "npm-check-updates": "11.4.1",
+    "prettier": "2.2.1",
+    "source-map-support": "0.5.19",
+    "typescript": "4.2.4"
+  },
+  "lint-staged": {
+    "*.{css,json,md}": [
+      "prettier --write",
+      "git add"
+    ],
+    "*.{js,jsx,ts}": [
+      "eslint --ignore-path .gitignore --fix",
+      "git add"
+    ]
+  },
+  "dependencies": {
+    "tslib": "1.14.1"
+  }
+}
