@@ -1,4 +1,4 @@
-# 👟 Import runner
+# 👟 Import Runner
 
 Dynamically import and run functions (even on client side!)
 
