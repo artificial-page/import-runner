@@ -65,8 +65,8 @@ import run from "import-runner"
 
 | Option | Description |
 | :--- | :--- |
-| `arg` | Argument to pass into functions (object or array only in `memo` mode) |
-| `memo` | Memoize function output (`arg` is the starting value) |
+| `arg` | Function argument (must be object or array in `memo` mode) |
+| `memo` | Memoize function return values (`arg` is the starting value) |
 | `skip` | Custom function skip condition |
 
 > ℹ️ Options may exist at any depth, and apply to all child functions unless overwritten.
