@@ -1,5 +1,5 @@
 export const ext =
-  typeof history === undefined ? "" : ".mjs"
+  typeof history === "undefined" ? "" : ".mjs"
 
 export interface ImportRunnerInput {
   arg?: any
@@ -32,7 +32,7 @@ export async function importRunner({
         each: input.each,
         arg:
           input.memo ?? memo
-            ? memoArg({ arg: input.arg, out: arg })
+            ? memoArg({ arg, out: input.arg })
             : input.arg ?? arg,
         cwd: input.cwd ?? cwd,
         memo: input.memo ?? memo,
@@ -76,7 +76,7 @@ export function memoArg({
   out: any
 }): any {
   if (arg === undefined || out === undefined) {
-    return arg ?? out
+    return out ?? arg
   }
 
   if (Array.isArray(arg)) {
