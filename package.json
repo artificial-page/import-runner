@@ -1,7 +1,7 @@
 {
-  "name": "ts-base",
+  "name": "import-runner",
   "version": "0.0.1",
-  "description": "TypeScript base project",
+  "description": "Dynamically import and run functions (even on client side!)",
   "private": true,
   "bin": {},
   "scripts": {
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/winton/ts-base.git"
+    "url": "git+ssh://git@github.com/artificial-page/import-runner.git"
   },
   "author": "Winton Welsh <mail@wintoni.us>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/winton/ts-base/issues"
+    "url": "https://github.com/artificial-page/import-runner/issues"
   },
-  "homepage": "https://github.com/winton/ts-base#readme",
+  "homepage": "https://github.com/artificial-page/import-runner#readme",
   "devDependencies": {
     "@types/fs-extra": "9.0.10",
     "@types/mocha": "8.2.2",
