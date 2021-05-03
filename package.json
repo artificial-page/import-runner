@@ -2,8 +2,7 @@
   "name": "import-runner",
   "version": "0.0.1",
   "description": "Dynamically import and run functions (even on client side!)",
-  "private": true,
-  "bin": {},
+  "main": "./dist/cjs-ts/importRunner.js",
   "scripts": {
     "build": "./bin/build",
     "postinstall": "husky install; npm run build",
