@@ -73,7 +73,7 @@ import run from "import-runner"
 
 > ℹ️ Child `arg` options are merged if they are similar types and `memo: true`.
 
-## Client side
+## ♻️ Client side
 
 When running in the browser, import runner automatically adds `.mjs` extensions to your path.
 
