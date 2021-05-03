@@ -2,14 +2,13 @@ export const ext =
   typeof history === "undefined" ? "" : ".mjs"
 
 export interface ImportRunnerInput {
+  path?: string
   arg?: any
   cwd?: string
-  all?: (ImportRunnerInput & { path?: string })[]
-  each?: (ImportRunnerInput & { path?: string })[]
+  all?: ImportRunnerInput[]
+  each?: ImportRunnerInput[]
   memo?: boolean
-  skip?: (
-    input: ImportRunnerInput & { path: string }
-  ) => boolean
+  skip?: (input: ImportRunnerInput) => boolean
 }
 
 export async function importRunner({
@@ -19,10 +18,8 @@ export async function importRunner({
   each,
   memo,
   skip,
-}: ImportRunnerInput): Promise<any> {
-  let caller: (
-    input: ImportRunnerInput & { path?: string }
-  ) => any
+}: Exclude<ImportRunnerInput, "path">): Promise<any> {
+  let caller: (input: ImportRunnerInput) => any
 
   if (all || each) {
     caller = (input) => {
@@ -89,7 +86,7 @@ export function memoArg({
 }
 
 export async function importRunnerCaller(
-  input: ImportRunnerInput & { path: string }
+  input: ImportRunnerInput
 ): Promise<any> {
   const { path, arg, cwd, skip } = input
 
