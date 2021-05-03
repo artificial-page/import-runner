@@ -10,6 +10,8 @@ npm install import-runner
 
 ## 🏃 Run
 
+Import runner provides a shorthand for executing somewhat complex control flows:
+
 ```typescript
 import run from "import-runner"
 
@@ -23,6 +25,12 @@ import run from "import-runner"
         all: [
           { path: "otherFunction" },
           { path: "andAnotherFunction" },
+          {
+            each: [
+              { path: "wowAnotherFunction" },
+              { path: "enoughFunction" }
+            ]
+          }
         ]
       }
     ],
@@ -47,7 +55,7 @@ import run from "import-runner"
     arg: {},
     memo: true,
     each: [
-      { path: "thisFunction" },
+      { path: "thisFunction", arg: { hi: true } },
       { path: "thatFunction" }
     ],
     skip: ({ path }) => path === "thatFunction",
