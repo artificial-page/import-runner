@@ -28,11 +28,11 @@ import run from "import-runner"
           {
             each: [
               { path: "wowAnotherFunction" },
-              { path: "enoughFunction" }
-            ]
-          }
-        ]
-      }
+              { path: "enoughFunction" },
+            ],
+          },
+        ],
+      },
     ],
   })
 })()
@@ -56,7 +56,7 @@ import run from "import-runner"
     memo: true,
     each: [
       { path: "thisFunction", arg: { hi: true } },
-      { path: "thatFunction" }
+      { path: "thatFunction" },
     ],
     skip: ({ path }) => path === "thatFunction",
   })
