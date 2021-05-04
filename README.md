@@ -41,8 +41,8 @@ import run from "import-runner"
 | Option | Description | Type |
 | :--- | :--- | :--- |
 | `cwd` | Working directory | `string` |
-| `each` | Sequentially execute an array of functions | `ImportRunnerInput[]` |
-| `all` | Concurrently execute an array of functions | `ImportRunnerInput[]` |
+| `each` | Sequentially execute an array of functions | [`ImportRunnerInput[]`](src/importRunnerTypes.ts) |
+| `all` | Concurrently execute an array of functions | [`ImportRunnerInput[]`](src/importRunnerTypes.ts) |
 
 ## 🤖 Function
 
