@@ -19,7 +19,7 @@ import run from "import-runner"
   await run({
     cwd: __dirname,
     each: [
-      { path: "thisFunction" },
+      { path: "myFunction" },
       { path: "thatFunction" },
       {
         all: [
@@ -38,11 +38,21 @@ import run from "import-runner"
 })()
 ```
 
-| Option | Description |
-| :--- | :--- |
-| `cwd` | Working directory to find functions |
-| `each` | Execute functions in succession (one after the other) |
-| `all` | Execute functions concurrently (all at once) |
+| Option | Description | Type |
+| :--- | :--- | :--- |
+| `cwd` | Working directory | `string` |
+| `each` | Sequentially execute an array of functions | `ImportRunnerInput[]` |
+| `all` | Concurrently execute an array of functions | `ImportRunnerInput[]` |
+
+## 🤖 Function
+
+Define your functions using the default export:
+
+```typescript
+export default async () => {
+  // do something
+}
+```
 
 ## ⛷️ More options
 
@@ -52,26 +62,26 @@ import run from "import-runner"
 (async () => {
   const memo = await run({
     cwd: __dirname,
-    arg: {},
-    memo: true,
+    memo: { default: {} },
+    input: ["default"],
+    output: ["default"],
     each: [
-      { path: "thisFunction", arg: { hi: true } },
+      { path: "thisFunction" },
       { path: "thatFunction" },
     ],
-    skip: ({ path }) => path === "thatFunction",
   })
 })()
 ```
 
-| Option | Description |
-| :--- | :--- |
-| `arg` | Function argument (must be object or array in `memo` mode) |
-| `memo` | Memoize function return values (`arg` is the starting value) |
-| `skip` | Custom function skip condition |
+| Option | Description | Type |
+| :--- | :--- | :--- |
+| `memo` | Memo default values | `Record<string, any>` |
+| `input` | Memos to use as function inputs | `string[]` |
+| `output` | Memos to store function outputs | `string[]` |
 
-> ℹ️ Options may exist at any depth, and apply to all child functions unless overwritten.
+> ℹ️ Options may exist at any depth in the control structure.
 
-> ℹ️ Child `arg` options are merged if they are similar types and `memo: true`.
+> ℹ️ Parent options apply to child functions until overwritten.
 
 ## ♻️ Client side
 

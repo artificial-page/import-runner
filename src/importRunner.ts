@@ -3,106 +3,79 @@ export const ext =
 
 export interface ImportRunnerInput {
   path?: string
-  arg?: any
   cwd?: string
   all?: ImportRunnerInput[]
   each?: ImportRunnerInput[]
-  memo?: boolean
+  memo?: Record<string, any>
+  input?: string[]
+  output?: string[]
   skip?: (input: ImportRunnerInput) => boolean
 }
 
-export async function importRunner({
-  arg,
-  cwd,
-  all,
-  each,
-  memo,
-  skip,
-}: Exclude<ImportRunnerInput, "path">): Promise<any> {
-  let caller: (input: ImportRunnerInput) => any
-
-  if (all || each) {
-    caller = (input) => {
-      return importRunnerCaller({
-        path: input.path,
-        all: input.all,
-        each: input.each,
-        arg:
-          input.memo ?? memo
-            ? memoArg({ arg, out: input.arg })
-            : input.arg ?? arg,
-        cwd: input.cwd ?? cwd,
-        memo: input.memo ?? memo,
-        skip: input.skip ?? skip,
-      })
-    }
-  }
-
-  if (all) {
-    const outputs = await Promise.all(
-      all.map(caller).filter((p) => p !== undefined)
-    )
-
-    if (memo) {
-      for (const out of outputs) {
-        arg = memoArg({ arg, out })
-      }
-    }
-  }
-
-  if (each) {
-    let out: any
-
-    for (const input of each) {
-      out = await caller(input)
-
-      if (memo) {
-        arg = memoArg({ arg, out })
-      }
-    }
-  }
-
-  return arg
-}
-
-export function memoArg({
-  arg,
-  out,
-}: {
-  arg: any
-  out: any
-}): any {
-  if (arg === undefined || out === undefined) {
-    return out ?? arg
-  }
-
-  if (Array.isArray(arg)) {
-    arg = arg.concat(out)
-  } else if (typeof arg === "object") {
-    arg = Object.assign({}, arg, out)
-  }
-
-  return arg
-}
-
-export async function importRunnerCaller(
-  input: ImportRunnerInput
+export async function importRunner(
+  importRunnerInput: ImportRunnerInput
 ): Promise<any> {
-  const { path, arg, cwd, skip } = input
+  const {
+    cwd,
+    path,
+    all,
+    each,
+    memo,
+    input,
+    output,
+  } = importRunnerInput
+
+  const results = []
 
   if (path) {
-    if (typeof skip === "function" && skip(input)) {
-      return arg
-    }
-
     const { default: fn } = await import(
       (cwd ? `${cwd}/${path}` : path) + ext
     )
 
-    return await fn(arg)
-  } else {
-    return await importRunner(input)
+    if (input) {
+      const arg: any = {}
+
+      for (const key of input) {
+        Object.assign(arg, memo[key])
+      }
+
+      results.push(await fn(arg))
+    } else {
+      results.push(await fn())
+    }
+  } else if (all) {
+    await Promise.all(
+      all.map((allInput) =>
+        importRunner({
+          cwd,
+          memo,
+          input,
+          output,
+          ...allInput,
+        })
+      )
+    )
+  } else if (each) {
+    for (const eachInput of each) {
+      await importRunner({
+        cwd,
+        memo,
+        input,
+        output,
+        ...eachInput,
+      })
+    }
   }
+
+  if (output) {
+    for (const result of results) {
+      for (const key of output) {
+        Object.assign(memo[key], result)
+      }
+    }
+  }
+
+  return memo
 }
 
 export default importRunner

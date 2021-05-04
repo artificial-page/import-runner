@@ -1,31 +1,18 @@
-export async function importRunnerFixture(input: {
-  id: string
-  startTime: number
-  times: [string, number][]
-}): Promise<{
-  startTime: number
-}> {
-  const { times } = input
+let receivedArgs = []
 
-  let { id, startTime } = input
-
-  id = id ?? "bug!"
-  startTime = startTime ?? new Date().getTime()
-
-  await delay(5)
-
-  if (times) {
-    times.push([id, new Date().getTime() - startTime])
-  }
-
-  return {
-    [id]: true,
-    startTime,
-  }
+export function getArgs(): any[] {
+  return receivedArgs
 }
 
-export function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms))
+export function getLastArg(): any[] {
+  return receivedArgs[receivedArgs.length - 1]
 }
 
-export default importRunnerFixture
+export function resetArgs(): void {
+  receivedArgs = []
+}
+
+export default (...args: any[]): Record<string, string> => {
+  receivedArgs.push(args)
+  return { hello: "world" }
+}
