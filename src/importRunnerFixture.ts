@@ -1,18 +1,50 @@
-let receivedArgs = []
+let calls = []
+let delayMs: number
 
-export function getArgs(): any[] {
-  return receivedArgs
+export function getCalls(): any[] {
+  return calls.map(({ args, delayed }) => ({
+    args,
+    delayed,
+  }))
 }
 
-export function getLastArg(): any[] {
-  return receivedArgs[receivedArgs.length - 1]
+export function getLastCall(): any {
+  return calls[calls.length - 1]
 }
 
-export function resetArgs(): void {
-  receivedArgs = []
+export function reset(): void {
+  calls = []
+  delayMs = undefined
 }
 
-export default (...args: any[]): Record<string, string> => {
-  receivedArgs.push(args)
-  return { hello: "world" }
+export function setDelay(ms: number): void {
+  delayMs = ms
+}
+
+export function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+export default async (
+  ...args: any[]
+): Promise<Record<string, string>> => {
+  const id = Math.random().toString(36).substr(2, 9)
+
+  if (delayMs) {
+    await delay(delayMs)
+  }
+
+  const lastCall = getLastCall()
+  const time = new Date().getTime()
+
+  calls.push({
+    args,
+    id,
+    time,
+    delayed: lastCall
+      ? time - lastCall.time > delayMs
+      : false,
+  })
+
+  return { id }
 }
