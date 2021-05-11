@@ -44,9 +44,15 @@ export async function thisThat(memo: { hi: boolean }) {
 | `each` | Sequentially execute an array of imports (may be nested) |
 | `memo` | An object that acts as input and output for function calls |
 
-## ➰ Function
+## ➰ Functions
 
 Define your functions using the default export:
+
+```typescript
+export default (): void => {}
+```
+
+Use `OutType` to reference previous function outputs as the input:
 
 ```typescript
 import { OutType } from "io-type"
@@ -54,24 +60,18 @@ import myFunction from "./myFunction"
 import thatFunction from "./thatFunction"
 
 export default async function otherFunction({
-  myOutput,
-  thatOutput,
+  myOption,
+  thatOption,
 }: OutType<typeof myFunction> &
   OutType<typeof thatFunction>
 ): Promise<{ hello: string }> {
-  const prefix: string = ""
-  
-  if (myOutput) {
-    prefix = "my "
-  } else if (thatOutput) {
-    prefix = "that "
-  }
-  
-  return { hello: `${prefix}world` }
+  return myOption
+    ? { hello: "my world" }
+    : thatOption
+      ? { hello: "that world" }
+      : { hello: "world" }
 }
 ```
-
-> ℹ️ Use `InType` and `OutType` to reference previous function inputs & outputs
 
 ## 🤖 Low code
 
