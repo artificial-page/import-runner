@@ -1,10 +1,10 @@
+export interface ImportType {
+  default: (arg: Record<string, any>) => Record<string, any>
+}
+
 export interface ImportRunnerInput {
-  path?: string
-  cwd?: string
-  all?: ImportRunnerInput[]
-  each?: ImportRunnerInput[]
+  all?: (ImportRunnerInput | Promise<ImportType>)[]
+  each?: (ImportRunnerInput | Promise<ImportType>)[]
   memo?: Record<string, any>
-  input?: string[]
-  output?: string[]
-  skip?: (input: ImportRunnerInput) => boolean
+  promise?: Promise<ImportType>
 }

@@ -1,6 +1,6 @@
 # 👟 Import Runner
 
-Dynamically import and run functions (even on client side!)
+Low code control flow with dynamic imports
 
 ## ⚙️ Install
 
@@ -10,81 +10,70 @@ npm install import-runner
 
 ## 🏃 Run
 
-Import runner provides a shorthand for executing somewhat complex control flows:
+Import runner provides a shorthand for executing complex control flows:
 
 ```typescript
-import run from "import-runner"
+import importRunner from "import-runner"
 
-(async () => {
-  await run({
-    cwd: __dirname,
+export async function thisThat(memo: { hi: boolean }) {
+  return await importRunner({
+    memo,
     each: [
-      { path: "myFunction" },
-      { path: "thatFunction" },
+      import("./myFunction"),
+      import("./thatFunction"),
       {
         all: [
-          { path: "otherFunction" },
-          { path: "andAnotherFunction" },
+          import("./otherFunction"),
+          import("./andAnotherFunction"),
           {
             each: [
-              { path: "wowAnotherFunction" },
-              { path: "enoughFunction" },
+              import("./wowAnotherFunction"),
+              import("./enoughFunction"),
             ],
           },
         ],
       },
     ],
   })
-})()
+}
 ```
 
-| Option | Description | Type |
-| :--- | :--- | :--- |
-| `cwd` | Working directory | `string` |
-| `each` | Sequentially execute an array of functions | [`ImportRunnerInput[]`](src/importRunnerTypes.ts) |
-| `all` | Concurrently execute an array of functions | [`ImportRunnerInput[]`](src/importRunnerTypes.ts) |
+**Memo** an object that acts as input and output for function calls.
 
-## 🤖 Function
+**All** concurrently execute an array of imports (or a nested each/all).
+
+**Each** sequentially execute an array of imports (or a nested each/all).
+
+## ➰ Function
 
 Define your functions using the default export:
 
 ```typescript
-export default async () => {
-  // do something
+export default async function ({
+  hello: boolean
+}): Promise<{ hello: string }> {
+  if (hello) {
+    return { hello: "world" }
+  }
 }
 ```
 
-## ⛷️ More options
+> ℹ️ Function input and output types should be inline interfaces (as opposed to a reference). You may still have references as values of the inline interface.
+
+## 🤖 Low code
+
+Now we can read the order of execution from `importRunner` calls programmatically and use this information to:
+
+1. Dynamically build the output type of function calling `importRunner`
+2. Validate that each function has a means of receiving the requested input
+
+Process source files with [chokidar](https://github.com/paulmillr/chokidar):
 
 ```typescript
-import run from "import-runner"
+import { sourceProcessor } from "import-runner"
+import chokidar from "chokidar"
 
-(async () => {
-  const memo = await run({
-    cwd: __dirname,
-    memo: { default: {} },
-    input: ["default"],
-    output: ["default"],
-    each: [
-      { path: "thisFunction" },
-      { path: "thatFunction" },
-    ],
-  })
-})()
+chokidar.watch(".").on("change", (event, path) => {
+  sourceProcessor(path)
+})
 ```
-
-| Option | Description | Type |
-| :--- | :--- | :--- |
-| `memo` | Memo default values | `Record<string, any>` |
-| `input` | Memos to use as function inputs | `string[]` |
-| `output` | Memos to store function outputs | `string[]` |
-
-> ℹ️ Options may exist at any depth in the control structure.
-
-> ℹ️ Parent options apply to child functions until overwritten.
-
-## ♻️ Client side
-
-When running in the browser, import runner automatically adds `.mjs` extensions to your path.
-
-You'll likely still need to change the `cwd` option on the client to point to your assets directory.

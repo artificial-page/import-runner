@@ -1,68 +1,57 @@
-import { ImportRunnerInput } from "./importRunnerTypes"
-
-export const ext =
-  typeof history === "undefined" ? "" : ".mjs"
+import {
+  ImportRunnerInput,
+  ImportType,
+} from "./importRunnerTypes"
 
 export async function importRunner(
-  importRunnerInput: ImportRunnerInput
-): Promise<any> {
-  const {
-    cwd,
-    path,
-    all,
-    each,
-    memo,
-    input,
-    output,
-  } = importRunnerInput
+  importRunnerInput: ImportRunnerInput | Promise<ImportType>
+): Promise<Record<string, any>> {
+  let promise: Promise<any>
+  let { all, each, memo }: ImportRunnerInput = {}
 
-  const results = []
-
-  if (path) {
-    const { default: fn } = await import(
-      (cwd ? `${cwd}/${path}` : path) + ext
-    )
-
-    if (input) {
-      const arg: any = {}
-
-      for (const key of input) {
-        Object.assign(arg, memo[key])
-      }
-
-      results.push(await fn(arg))
-    } else {
-      results.push(await fn())
-    }
-  } else if (all) {
-    await Promise.all(
-      all.map((allInput) =>
-        importRunner({
-          cwd,
-          memo,
-          input,
-          output,
-          ...allInput,
-        })
-      )
-    )
-  } else if (each) {
-    for (const eachInput of each) {
-      await importRunner({
-        cwd,
-        memo,
-        input,
-        output,
-        ...eachInput,
-      })
-    }
+  if (importRunnerInput["then"]) {
+    promise = importRunnerInput as Promise<any>
+  } else {
+    ;({ all, each, memo, promise } =
+      importRunnerInput as ImportRunnerInput)
   }
 
-  if (output) {
-    for (const result of results) {
-      for (const key of output) {
-        Object.assign(memo[key], result)
-      }
+  memo = memo ?? {}
+
+  if (promise) {
+    const { default: fn } = await promise
+
+    if (fn) {
+      const out = await fn(memo)
+      Object.assign(memo, out)
+    }
+  } else if (all) {
+    const out = await Promise.all(
+      all.map((input) =>
+        importRunner(
+          input["then"]
+            ? {
+                memo,
+                promise: input as Promise<ImportType>,
+              }
+            : { memo, ...input }
+        )
+      )
+    )
+    for (const obj of out) {
+      Object.assign(memo, obj)
+    }
+  } else if (each) {
+    for (const input of each) {
+      const out = await importRunner(
+        input["then"]
+          ? {
+              memo,
+              promise: input as Promise<ImportType>,
+            }
+          : { memo, ...input }
+      )
+      Object.assign(memo, out)
     }
   }
 

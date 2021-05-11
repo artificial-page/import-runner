@@ -10,218 +10,59 @@ import {
 describe("importRunner", () => {
   beforeEach(reset)
 
-  it("runs with path", async () => {
-    const out = await importRunner({
-      cwd: __dirname,
-      path: "importRunnerFixture",
-    })
-    expect(out).toBeUndefined()
-    expect(getLastCall().args).toEqual([])
+  it("runs with promise", async () => {
+    const out = await importRunner(
+      import("./importRunnerFixture")
+    )
+    const { id } = getLastCall()
+    expect(out).toEqual({ id })
+    expect(getLastCall().args).toEqual([{ id }])
   })
 
-  it("runs with path and input memo", async () => {
-    const out = await importRunner({
-      cwd: __dirname,
-      memo: { default: { test: true } },
-      input: ["default"],
-      path: "importRunnerFixture",
-    })
-    const { args } = getLastCall()
-    expect(out).toEqual({ default: { test: true } })
-    expect(args).toEqual([{ test: true }])
-  })
-
-  it("runs with path and output memo", async () => {
-    const out = await importRunner({
-      cwd: __dirname,
-      memo: { default: { test: true } },
-      output: ["default"],
-      path: "importRunnerFixture",
-    })
-    const { args, id } = getLastCall()
-    expect(out).toEqual({
-      default: { id, test: true },
-    })
-    expect(args).toEqual([])
-  })
-
-  it("runs with path and input/output memo", async () => {
-    const out = await importRunner({
-      cwd: __dirname,
-      memo: { default: { test: true } },
-      input: ["default"],
-      output: ["default"],
-      path: "importRunnerFixture",
-    })
-    const { args, id } = getLastCall()
-    expect(out).toEqual({
-      default: { id, test: true },
-    })
-    expect(args).toEqual([{ test: true }])
-  })
-
-  it("runs with each", async () => {
+  it("runs with each and memo", async () => {
     setDelay(5)
 
     const out = await importRunner({
-      cwd: __dirname,
+      memo: { test: true },
       each: [
-        { path: "importRunnerFixture" },
-        { path: "importRunnerFixture" },
-      ],
-    })
-
-    expect(out).toBeUndefined()
-    expect(getCalls()).toEqual([
-      { args: [], delayed: false },
-      { args: [], delayed: true },
-    ])
-  })
-
-  it("runs with each and input memo", async () => {
-    setDelay(5)
-
-    const out = await importRunner({
-      cwd: __dirname,
-      memo: { default: { test: true } },
-      input: ["default"],
-      each: [
-        { path: "importRunnerFixture" },
-        { path: "importRunnerFixture" },
-      ],
-    })
-
-    expect(out).toEqual({ default: { test: true } })
-    expect(getCalls()).toEqual([
-      { args: [{ test: true }], delayed: false },
-      { args: [{ test: true }], delayed: true },
-    ])
-  })
-
-  it("runs with each and output memo", async () => {
-    setDelay(5)
-
-    const out = await importRunner({
-      cwd: __dirname,
-      memo: { default: { test: true } },
-      output: ["default"],
-      each: [
-        { path: "importRunnerFixture" },
-        { path: "importRunnerFixture" },
+        import("./importRunnerFixture"),
+        import("./importRunnerFixture"),
       ],
     })
 
     const { id } = getLastCall()
-    expect(out).toEqual({ default: { id, test: true } })
+    expect(out).toEqual({ id, test: true })
     expect(getCalls()).toEqual([
-      { args: [], delayed: false },
-      { args: [], delayed: true },
-    ])
-  })
-
-  it("runs with each and input/output memo", async () => {
-    setDelay(5)
-
-    const out = await importRunner({
-      cwd: __dirname,
-      memo: { default: { test: true } },
-      input: ["default"],
-      output: ["default"],
-      each: [
-        { path: "importRunnerFixture" },
-        { path: "importRunnerFixture" },
-      ],
-    })
-
-    const { id } = getLastCall()
-    expect(out).toEqual({ default: { id, test: true } })
-    expect(getCalls()).toEqual([
-      { args: [{ test: true }], delayed: false },
       {
-        args: [{ id: expect.any(String), test: true }],
+        args: [{ id, test: true }],
+        delayed: false,
+      },
+      {
+        args: [{ id, test: true }],
         delayed: true,
       },
     ])
   })
 
-  it("runs with all", async () => {
+  it("runs with all and memo", async () => {
     setDelay(5)
 
     const out = await importRunner({
-      cwd: __dirname,
+      memo: { test: true },
       all: [
-        { path: "importRunnerFixture" },
-        { path: "importRunnerFixture" },
-      ],
-    })
-
-    expect(out).toBeUndefined()
-    expect(getCalls()).toEqual([
-      { args: [], delayed: false },
-      { args: [], delayed: false },
-    ])
-  })
-
-  it("runs with all and input memo", async () => {
-    setDelay(5)
-
-    const out = await importRunner({
-      cwd: __dirname,
-      memo: { default: { test: true } },
-      input: ["default"],
-      all: [
-        { path: "importRunnerFixture" },
-        { path: "importRunnerFixture" },
-      ],
-    })
-
-    expect(out).toEqual({ default: { test: true } })
-    expect(getCalls()).toEqual([
-      { args: [{ test: true }], delayed: false },
-      { args: [{ test: true }], delayed: false },
-    ])
-  })
-
-  it("runs with all and output memo", async () => {
-    setDelay(5)
-
-    const out = await importRunner({
-      cwd: __dirname,
-      memo: { default: { test: true } },
-      output: ["default"],
-      all: [
-        { path: "importRunnerFixture" },
-        { path: "importRunnerFixture" },
+        import("./importRunnerFixture"),
+        import("./importRunnerFixture"),
       ],
     })
 
     const { id } = getLastCall()
-    expect(out).toEqual({ default: { id, test: true } })
+    expect(out).toEqual({ id, test: true })
     expect(getCalls()).toEqual([
-      { args: [], delayed: false },
-      { args: [], delayed: false },
-    ])
-  })
-
-  it("runs with all and input/output memo", async () => {
-    setDelay(5)
-
-    const out = await importRunner({
-      cwd: __dirname,
-      memo: { default: { test: true } },
-      input: ["default"],
-      output: ["default"],
-      all: [
-        { path: "importRunnerFixture" },
-        { path: "importRunnerFixture" },
-      ],
-    })
-
-    const { id } = getLastCall()
-    expect(out).toEqual({ default: { id, test: true } })
-    expect(getCalls()).toEqual([
-      { args: [{ test: true }], delayed: false },
-      { args: [{ test: true }], delayed: false },
+      {
+        args: [{ id, test: true }],
+        delayed: false,
+      },
+      { args: [{ id, test: true }], delayed: false },
     ])
   })
 
@@ -229,25 +70,25 @@ describe("importRunner", () => {
     setDelay(5)
 
     const out = await importRunner({
-      cwd: __dirname,
       each: [
-        { path: "importRunnerFixture" },
-        { path: "importRunnerFixture" },
+        import("./importRunnerFixture"),
+        import("./importRunnerFixture"),
         {
           all: [
-            { path: "importRunnerFixture" },
-            { path: "importRunnerFixture" },
+            import("./importRunnerFixture"),
+            import("./importRunnerFixture"),
           ],
         },
       ],
     })
 
-    expect(out).toBeUndefined()
+    const { id } = getLastCall()
+    expect(out).toEqual({ id })
     expect(getCalls()).toEqual([
-      { args: [], delayed: false },
-      { args: [], delayed: true },
-      { args: [], delayed: true },
-      { args: [], delayed: false },
+      { args: [{ id }], delayed: false },
+      { args: [{ id }], delayed: true },
+      { args: [{ id }], delayed: true },
+      { args: [{ id }], delayed: false },
     ])
   })
 })
