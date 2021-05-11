@@ -38,11 +38,11 @@ export async function thisThat(memo: { hi: boolean }) {
 }
 ```
 
-**Memo** is an object that acts as input and output for function calls.
-
-**All** concurrently execute an array of imports (or a nested each/all).
-
-**Each** sequentially execute an array of imports (or a nested each/all).
+| Option | Description |
+| :--- | :--- |
+| `all` | Concurrently execute an array of imports (may be nested) |
+| `each` | Sequentially execute an array of imports (may be nested) |
+| `memo` | An object that acts as input and output for function calls |
 
 ## ➰ Function
 
