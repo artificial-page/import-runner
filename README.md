@@ -49,16 +49,27 @@ export async function thisThat(memo: { hi: boolean }) {
 Define your functions using the default export:
 
 ```typescript
-export default async function ({
-  hello: boolean
-}): Promise<{ hello: string }> {
-  if (hello) {
-    return { hello: "world" }
-  }
+import { OutType } from "in-out-type"
+import myFunction from "./myFunction"
+import thatFunction from "./thatFunction"
+
+export default async function otherFunction({
+  myOutput,
+  thatOutput,
+}: OutType<typeof myFunction> &
+  OutType<typeof thatFunction>
+): Promise<{ hello: string }> {
+  const prefix = myOutput
+    ? "my " : thatOutput
+      ? "that " : ""
+  
+  return { hello: `${prefix}world` }
 }
 ```
 
-> ℹ️ Function input and output types should be inline interfaces (as opposed to a reference). You may still have references as values of the inline interface.
+> ℹ️ Function input types use `OutType` to reference previous function outputs
+
+> ℹ️ Function output types use inline interfaces (as opposed to a reference)
 
 ## 🤖 Low code
 
