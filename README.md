@@ -49,7 +49,7 @@ export async function thisThat(memo: { hi: boolean }) {
 Define your functions using the default export:
 
 ```typescript
-import { OutType } from "in-out-type"
+import { OutType } from "io-type"
 import myFunction from "./myFunction"
 import thatFunction from "./thatFunction"
 
@@ -59,21 +59,23 @@ export default async function otherFunction({
 }: OutType<typeof myFunction> &
   OutType<typeof thatFunction>
 ): Promise<{ hello: string }> {
-  const prefix = myOutput
-    ? "my " : thatOutput
-      ? "that " : ""
+  const prefix: string = ""
+  
+  if (myOutput) {
+    prefix = "my "
+  } else if (thatOutput) {
+    prefix = "that "
+  }
   
   return { hello: `${prefix}world` }
 }
 ```
 
-> ℹ️ Function input types use `OutType` to reference previous function outputs
-
-> ℹ️ Function output types use inline interfaces (as opposed to a reference)
+> ℹ️ Use `InType` and `OutType` to reference previous function inputs & outputs
 
 ## 🤖 Low code
 
-Now we can read the order of execution from `importRunner` calls programmatically and use this information to:
+Now we can programmatically parse `importRunner` calls and use this information to:
 
 1. Dynamically build the output type of function calling `importRunner`
 2. Validate that each function has a means of receiving the requested input
