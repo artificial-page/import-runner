@@ -2,7 +2,7 @@ import importRunner from "./importRunner"
 
 export async function runner(memo: {
   hi: boolean
-}): Promise<any> {
+}): Promise<Record<string, any>> {
   return await importRunner({
     memo,
     all: [

@@ -9,8 +9,8 @@ export const fnRegexString = "\\({(.+)(?=\\n\\s\\s})"
 
 export const dynamicImportRegex = /import\(\s*["'][^"']+/g
 
-export const outputTypeRegex =
-  "}\\):\\s(Promise<any>|any)\\s{"
+export const outputTypeRegexString =
+  "}\\):\\s(Promise<Record<string,\\sany>>|Promise<any>|any)\\s{"
 
 export async function sourceProcessor({
   path,
@@ -45,7 +45,7 @@ export async function sourceProcessor({
         basename(str)
       )
 
-      const outputs = basenames
+      const outputTypes = basenames
         .map((str) => `OutType<typeof ${str}>`)
         .join(" &\n  ")
 
@@ -55,9 +55,10 @@ export async function sourceProcessor({
         dest: path,
         replacements: [
           {
-            replace: (m, p1, p2) => `}): ${outputs} {${p2}`,
+            replace: (m, p1, p2) =>
+              `}): ${outputTypes} {${p2}`,
             search: new RegExp(
-              `${outputTypeRegex}(.+)(?=${match[1]}\\({)`,
+              `${outputTypeRegexString}(.+)(?=${match[1]}\\({)`,
               "s"
             ),
           },
