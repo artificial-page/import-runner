@@ -80,14 +80,15 @@ Now we can programmatically parse `importRunner` calls and use this information 
 1. Dynamically build the output type of function calling `importRunner`
 2. Validate that each function has a means of receiving the requested input
 
-Example code to process source files with [chokidar](https://github.com/paulmillr/chokidar) and [fileReplacer](https://github.com/artificial-page/file-replacer):
+Example code to process source files with [chokidar](https://github.com/paulmillr/chokidar), [file-replacer](https://github.com/artificial-page/file-replacer), and [fs-extra](https://github.com/jprichardson/node-fs-extra):
 
 ```typescript
 import chokidar from "chokidar"
 import fileReplacer from "file-replacer"
+import fsExtra from "fs-extra"
 import sourceProcessor from "import-runner/dist/cjs/sourceProcessor"
 
 chokidar.watch(".").on("change", (event, path) => {
-  sourceProcessor({ fileReplacer, path })
+  sourceProcessor({ fileReplacer, fsExtra, path })
 })
 ```
