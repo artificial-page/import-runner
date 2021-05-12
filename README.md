@@ -1,6 +1,6 @@
 # 👟 Import Runner
 
-Low code control flow with dynamic imports
+Low code control flow with dynamically imported functions
 
 ## ⚙️ Install
 
