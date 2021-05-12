@@ -31,7 +31,7 @@ export default async (
   const id = Math.random().toString(36).substr(2, 9)
 
   if (delayMs) {
-    await delay(delayMs)
+    await delay(delayMs + 1)
   }
 
   const lastCall = getLastCall()
