@@ -40,9 +40,11 @@ export async function thisThat(memo: { hi: boolean }) {
 
 | Option | Description |
 | :--- | :--- |
-| `all` | Concurrently execute an array of imports (may be nested) |
-| `each` | Sequentially execute an array of imports (may be nested) |
-| `memo` | An object that acts as input and output for function calls |
+| `all` | Concurrently execute an array of functions (may be nested) |
+| `each` | Sequentially execute an array of functions (may be nested) |
+| `memo` | An object that acts as input and output for function calls (root only) |
+
+> ℹ️ If a function returns an object, that object merges with the memo via `Object.assign`
 
 ## ➰ Functions
 
