@@ -4,17 +4,10 @@ import {
 } from "./importRunnerTypes"
 
 export async function importRunner(
-  importRunnerInput: ImportRunnerInput | Promise<ImportType>
+  importRunnerInput: ImportRunnerInput
 ): Promise<Record<string, any>> {
-  let promise: Promise<any>
-  let { all, each, memo }: ImportRunnerInput = {}
-
-  if (importRunnerInput["then"]) {
-    promise = importRunnerInput as Promise<any>
-  } else {
-    ;({ all, each, memo, promise } =
-      importRunnerInput as ImportRunnerInput)
-  }
+  const { all, each, promise } = importRunnerInput
+  let { memo } = importRunnerInput
 
   memo = memo ?? {}
 
@@ -28,14 +21,7 @@ export async function importRunner(
   } else if (all) {
     const out = await Promise.all(
       all.map((input) =>
-        importRunner(
-          input["then"]
-            ? {
-                memo,
-                promise: input as Promise<ImportType>,
-              }
-            : { memo, ...input }
-        )
+        importRunner(addMemoToInput({ memo, input }))
       )
     )
     for (const obj of out) {
@@ -44,18 +30,28 @@ export async function importRunner(
   } else if (each) {
     for (const input of each) {
       const out = await importRunner(
-        input["then"]
-          ? {
-              memo,
-              promise: input as Promise<ImportType>,
-            }
-          : { memo, ...input }
+        addMemoToInput({ memo, input })
       )
       Object.assign(memo, out)
     }
   }
 
   return memo
+}
+
+export function addMemoToInput({
+  memo,
+  input,
+}: {
+  memo: Record<string, any>
+  input: ImportRunnerInput | Promise<ImportType>
+}): ImportRunnerInput {
+  return input["then"]
+    ? {
+        memo,
+        promise: input as Promise<ImportType>,
+      }
+    : { memo, ...input }
 }
 
 export default importRunner

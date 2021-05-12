@@ -11,9 +11,9 @@ describe("importRunner", () => {
   beforeEach(reset)
 
   it("runs with promise", async () => {
-    const out = await importRunner(
-      import("./importRunnerFixture")
-    )
+    const out = await importRunner({
+      promise: import("./importRunnerFixture"),
+    })
     const { id } = getLastCall()
     expect(out).toEqual({ id })
     expect(getLastCall().args).toEqual([{ id }])
