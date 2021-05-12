@@ -29,28 +29,14 @@ describe("sourceProcessor", () => {
     expect(
       (await fsExtra.readFile(tmpPath)).toString()
     ).toBe(
-      /* typescript */ `
-import { OutType } from "io-type"
-import importRunner from "./importRunner"
-import importRunnerFixture from "./importRunnerFixture"
-
-export async function runner(memo: {
-  hi: boolean
-}): OutType<typeof importRunnerFixture> {
-  return await importRunner({
-    memo,
-    all: [
-      import("./importRunnerFixture"),
-      import("./importRunnerFixture"),
-      {
-        each: [
-          import("./importRunnerFixture"),
-          import("./importRunnerFixture"),
-        ],
-      },
-    ],
-  })
-}`.trim() + "\n"
+      (
+        await fsExtra.readFile(
+          path.join(
+            __dirname,
+            "../../src/sourceProcessorPostFixture.ts"
+          )
+        )
+      ).toString()
     )
   })
 })

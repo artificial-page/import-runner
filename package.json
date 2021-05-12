@@ -24,7 +24,7 @@
     "@artificial-page/util-types": "0.0.2",
     "@types/fs-extra": "9.0.11",
     "@types/mocha": "8.2.2",
-    "@types/node": "15.0.2",
+    "@types/node": "15.0.3",
     "@typescript-eslint/eslint-plugin": "4.23.0",
     "@typescript-eslint/parser": "4.23.0",
     "eslint": "7.26.0",
@@ -34,6 +34,7 @@
     "file-replacer": "0.3.1",
     "fs-extra": "10.0.0",
     "husky": "6.0.0",
+    "io-type": "0.0.12",
     "lint-staged": "11.0.0",
     "mocha": "8.4.0",
     "npm-check-updates": "11.5.11",
@@ -52,6 +53,7 @@
     ]
   },
   "dependencies": {
-    "tslib": "2.2.0"
+    "tslib": "2.2.0",
+    "un": "0.0.0"
   }
 }

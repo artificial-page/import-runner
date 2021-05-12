@@ -47,7 +47,7 @@ export async function sourceProcessor({
 
       const outputTypes = basenames
         .map((str) => `OutType<typeof ${str}>`)
-        .join(" &\n  ")
+        .join(" &\n    ")
 
       await fileReplacer({
         fsExtra,
@@ -56,7 +56,7 @@ export async function sourceProcessor({
         replacements: [
           {
             replace: (m, p1, p2) =>
-              `}): ${outputTypes} {${p2}`,
+              `}): Promise<\n  ${outputTypes}\n> {${p2}`,
             search: new RegExp(
               `${outputTypeRegexString}(.+)(?=${match[1]}\\({)`,
               "s"
