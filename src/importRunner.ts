@@ -5,7 +5,7 @@ import {
 
 export async function importRunner(
   importRunnerInput: ImportRunnerInput
-): Promise<Record<string, any>> {
+): Promise<any> {
   const { all, each, promise } = importRunnerInput
   let { memo } = importRunnerInput
 
