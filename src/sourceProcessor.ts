@@ -1,6 +1,7 @@
 import { basename, dirname, join, relative } from "path"
 import fileReplacerType from "file-replacer"
 import fsExtraType from "fs-extra"
+import importRunnerImport from "./parsers/importRunnerImport"
 
 export const runnerImportRegex =
   /import ([^\s]+) from "(\.?\/?importRunner)"/
@@ -25,12 +26,16 @@ export async function sourceProcessor({
   fsExtra: typeof fsExtraType
 }): Promise<void> {
   const data = (await fsExtra.readFile(path)).toString()
-  const match = data.match(runnerImportRegex)
 
-  if (match && match[1]) {
+  const { importVarName } = importRunnerImport({
+    data,
+  })
+
+  if (importVarName) {
     const fnMatch = data.match(
-      new RegExp(match[1] + fnRegexString, "s")
+      new RegExp(importVarName + fnRegexString, "s")
     )
+
     if (fnMatch && fnMatch[1]) {
       const importPaths = fnMatch[1]
         .match(dynamicImportRegex)
@@ -61,7 +66,7 @@ export async function sourceProcessor({
             replace: (m, p1, p2) =>
               `}): Promise<\n  ${outputTypes}\n> {${p2}`,
             search: new RegExp(
-              `${outputTypeRegexString}(.+)(?=${match[1]}\\({)`,
+              `${outputTypeRegexString}(.+)(?=${importVarName}\\({)`,
               "s"
             ),
           },
