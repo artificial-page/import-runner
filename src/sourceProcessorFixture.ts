@@ -1,6 +1,6 @@
 import importRunner from "./importRunner"
 
-export async function runner(memo: {
+export default async function sourceProcessorFixture(memo: {
   hi: boolean
 }): Promise<Record<string, any>> {
   return await importRunner({
@@ -8,10 +8,12 @@ export async function runner(memo: {
     all: [
       import("./importRunnerFixture"),
       import("./importRunnerFixture2"),
+      import("./importRunnerFixture3"),
       {
         each: [
           import("./importRunnerFixture"),
           import("./importRunnerFixture2"),
+          import("./importRunnerFixture3"),
         ],
       },
     ],

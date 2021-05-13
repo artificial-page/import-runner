@@ -1,4 +1,4 @@
-import { basename } from "path"
+import { basename, dirname, join, relative } from "path"
 import fileReplacerType from "file-replacer"
 import fsExtraType from "fs-extra"
 
@@ -11,6 +11,9 @@ export const dynamicImportRegex = /import\(\s*["'][^"']+/g
 
 export const outputTypeRegexString =
   "}\\):\\s(Promise<Record<string,\\sany>>|Promise<any>|any)\\s{"
+
+export const defaultFunctionOutputTypeRegex =
+  /export default (.+)(?=(\([^)]*\)):\s(Promise<)?(\{.+})>\s(=>|{))/s
 
 export async function sourceProcessor({
   path,
@@ -81,6 +84,131 @@ export async function sourceProcessor({
           },
         ],
       })
+
+      const prevImportPaths = []
+
+      for (const importName of importPaths) {
+        const importPath = join(
+          dirname(path),
+          importName + ".ts"
+        )
+
+        const importData = (
+          await fsExtra.readFile(importPath)
+        ).toString()
+
+        const outputTypesMatch =
+          importData.match(
+            defaultFunctionOutputTypeRegex
+          ) || []
+
+        let outputTypeIds = []
+
+        if (outputTypesMatch[4]) {
+          const outputTypes = outputTypesMatch[4]
+          const outputTypeIdsMatch =
+            outputTypes.match(/\w+\??:/g)
+
+          if (outputTypeIdsMatch) {
+            outputTypeIds = outputTypeIdsMatch.map(
+              (str) => str.split(/\??:/)[0]
+            )
+          }
+        }
+
+        if (outputTypesMatch[0] && outputTypesMatch[2]) {
+          let imports: string[]
+          let inputTypes: string
+
+          const pathInType = `InType<typeof ${basename(
+            path,
+            ".ts"
+          )}>`
+
+          let relPath = relative(
+            dirname(importPath),
+            path
+          ).replace(/\.ts$/, "")
+
+          if (!relPath.startsWith(".")) {
+            relPath = "./" + relPath
+          }
+
+          imports = [
+            `import ${basename(
+              path,
+              ".ts"
+            )} from "${relPath}"`,
+          ]
+
+          if (prevImportPaths.length) {
+            imports.unshift(
+              'import { InType, OutType } from "io-type"'
+            )
+            inputTypes = `(\n  input: ${pathInType} &\n    ${prevImportPaths
+              .map(
+                ([p, t], i) =>
+                  `OutType<typeof ${basename(p, ".ts")}>${
+                    prevImportPaths.length - 1 === i
+                      ? ""
+                      : " &"
+                  } // ${t.join(", ")}`
+              )
+              .join("\n    ")}\n)`
+
+            imports = [
+              ...imports,
+              ...prevImportPaths
+                .map(([p]) => {
+                  let relPath = relative(
+                    dirname(importPath),
+                    p
+                  ).replace(/\.ts$/, "")
+
+                  if (!relPath.startsWith(".")) {
+                    relPath = "./" + relPath
+                  }
+
+                  if (
+                    !importData.includes(
+                      `import ${basename(p, ".ts")} `
+                    )
+                  ) {
+                    return `import ${basename(
+                      p,
+                      ".ts"
+                    )} from "${relPath}"`
+                  }
+                })
+                .filter((str) => str),
+            ]
+          } else {
+            imports.unshift(
+              'import { InType } from "io-type"'
+            )
+            inputTypes = `(\n  input: ${pathInType}\n)`
+          }
+
+          await fileReplacer({
+            fsExtra,
+            data: importData,
+            dest: importPath,
+            replacements: [
+              {
+                search:
+                  outputTypesMatch[0] + outputTypesMatch[2],
+                replace: outputTypesMatch[0] + inputTypes,
+              },
+              {
+                search: /^/,
+                replace: imports.join("\n") + "\n\n",
+              },
+            ],
+          })
+        }
+
+        prevImportPaths.push([importPath, outputTypeIds])
+      }
     }
   }
 }

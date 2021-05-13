@@ -9,16 +9,27 @@ describe("sourceProcessor", () => {
   beforeEach(reset)
 
   it("runs", async () => {
-    const tmpPath = "/tmp/sourceProcessorFixture.ts"
+    const tmpFiles = [
+      "sourceProcessorFixture",
+      "importRunnerFixture",
+      "importRunnerFixture2",
+      "importRunnerFixture3",
+    ]
 
-    await fileReplacer({
-      fsExtra,
-      src: path.join(
-        __dirname,
-        "../../src/sourceProcessorFixture.ts"
-      ),
-      dest: tmpPath,
-    })
+    for (const tmpFile of tmpFiles) {
+      const tmpPath = `/tmp/${tmpFile}.ts`
+
+      await fileReplacer({
+        fsExtra,
+        src: path.join(
+          __dirname,
+          `../../src/${tmpFile}.ts`
+        ),
+        dest: tmpPath,
+      })
+    }
+
+    const tmpPath = "/tmp/sourceProcessorFixture.ts"
 
     await sourceProcessor({
       fileReplacer,
@@ -34,6 +45,57 @@ describe("sourceProcessor", () => {
           path.join(
             __dirname,
             "../../src/sourceProcessorPostFixture.ts"
+          )
+        )
+      ).toString()
+    )
+
+    expect(
+      (
+        await fsExtra.readFile(
+          "/tmp/importRunnerFixture.ts"
+        )
+      ).toString()
+    ).toBe(
+      (
+        await fsExtra.readFile(
+          path.join(
+            __dirname,
+            "../../src/importRunnerProcessedFixture.ts"
+          )
+        )
+      ).toString()
+    )
+
+    expect(
+      (
+        await fsExtra.readFile(
+          "/tmp/importRunnerFixture2.ts"
+        )
+      ).toString()
+    ).toBe(
+      (
+        await fsExtra.readFile(
+          path.join(
+            __dirname,
+            "../../src/importRunnerProcessedFixture2.ts"
+          )
+        )
+      ).toString()
+    )
+
+    expect(
+      (
+        await fsExtra.readFile(
+          "/tmp/importRunnerFixture3.ts"
+        )
+      ).toString()
+    ).toBe(
+      (
+        await fsExtra.readFile(
+          path.join(
+            __dirname,
+            "../../src/importRunnerProcessedFixture3.ts"
           )
         )
       ).toString()
