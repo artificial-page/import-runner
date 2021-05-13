@@ -2,6 +2,7 @@ import { basename, dirname, join, relative } from "path"
 import fileReplacerType from "file-replacer"
 import fsExtraType from "fs-extra"
 import importRunnerImport from "./parsers/importRunnerImport"
+import importRunnerFlow from "./parsers/importRunnerFlow"
 
 export const runnerImportRegex =
   /import ([^\s]+) from "(\.?\/?importRunner)"/
@@ -32,188 +33,177 @@ export async function sourceProcessor({
   })
 
   if (importVarName) {
-    const fnMatch = data.match(
-      new RegExp(importVarName + fnRegexString, "s")
+    const { flowPathsUnique } = importRunnerFlow({
+      data,
+      importVarName,
+    })
+
+    const imports = flowPathsUnique.map(
+      (str) => `import ${basename(str)} from "${str}"`
     )
 
-    if (fnMatch && fnMatch[1]) {
-      const importPaths = fnMatch[1]
-        .match(dynamicImportRegex)
-        .map((str) => str.split(/["']/)[1])
-        .filter(
-          (value, index, self) =>
-            self.indexOf(value) === index
-        )
+    const basenames = flowPathsUnique.map((str) =>
+      basename(str)
+    )
 
-      const imports = importPaths.map(
-        (str) => `import ${basename(str)} from "${str}"`
-      )
+    const outputTypes = basenames
+      .map((str) => `OutType<typeof ${str}>`)
+      .join(" &\n    ")
 
-      const basenames = importPaths.map((str) =>
-        basename(str)
-      )
-
-      const outputTypes = basenames
-        .map((str) => `OutType<typeof ${str}>`)
-        .join(" &\n    ")
-
-      await fileReplacer({
-        fsExtra,
-        data,
-        dest: path,
-        replacements: [
-          {
-            replace: (m, p1, p2) =>
-              `}): Promise<\n  ${outputTypes}\n> {${p2}`,
-            search: new RegExp(
-              `${outputTypeRegexString}(.+)(?=${importVarName}\\({)`,
-              "s"
+    await fileReplacer({
+      fsExtra,
+      data,
+      dest: path,
+      replacements: [
+        {
+          replace: (m, p1, p2) =>
+            `}): Promise<\n  ${outputTypes}\n> {${p2}`,
+          search: new RegExp(
+            `${outputTypeRegexString}(.+)(?=${importVarName}\\({)`,
+            "s"
+          ),
+        },
+        {
+          replace: (m, p1, p2) =>
+            [`import ${p1} from "${p2}"`, ...imports].join(
+              "\n"
             ),
-          },
-          {
-            replace: (m, p1, p2) =>
-              [
-                `import ${p1} from "${p2}"`,
-                ...imports,
-              ].join("\n"),
-            search: runnerImportRegex,
-          },
-          {
-            replace: (m, p1, p2) =>
-              [
-                'import { OutType } from "io-type"',
-                `import ${p1} from "${p2}"`,
-              ].join("\n"),
-            search: runnerImportRegex,
-            condition: (body) => !body.match(/\sOutType\s/),
-          },
-        ],
-      })
+          search: runnerImportRegex,
+        },
+        {
+          replace: (m, p1, p2) =>
+            [
+              'import { OutType } from "io-type"',
+              `import ${p1} from "${p2}"`,
+            ].join("\n"),
+          search: runnerImportRegex,
+          condition: (body) => !body.match(/\sOutType\s/),
+        },
+      ],
+    })
 
-      const prevImportPaths = []
+    const prevImportPaths = []
 
-      for (const importName of importPaths) {
-        const importPath = join(
-          dirname(path),
-          importName + ".ts"
-        )
+    for (const flowPath of flowPathsUnique) {
+      const importPath = join(
+        dirname(path),
+        flowPath + ".ts"
+      )
 
-        const importData = (
-          await fsExtra.readFile(importPath)
-        ).toString()
+      const importData = (
+        await fsExtra.readFile(importPath)
+      ).toString()
 
-        const outputTypesMatch =
-          importData.match(
-            defaultFunctionOutputTypeRegex
-          ) || []
+      const outputTypesMatch =
+        importData.match(defaultFunctionOutputTypeRegex) ||
+        []
 
-        let outputTypeIds = []
+      let outputTypeIds = []
 
-        if (outputTypesMatch[4]) {
-          const outputTypes = outputTypesMatch[4]
-          const outputTypeIdsMatch =
-            outputTypes.match(/\w+\??:/g)
+      if (outputTypesMatch[4]) {
+        const outputTypes = outputTypesMatch[4]
+        const outputTypeIdsMatch =
+          outputTypes.match(/\w+\??:/g)
 
-          if (outputTypeIdsMatch) {
-            outputTypeIds = outputTypeIdsMatch.map(
-              (str) => str.split(/\??:/)[0]
-            )
-          }
+        if (outputTypeIdsMatch) {
+          outputTypeIds = outputTypeIdsMatch.map(
+            (str) => str.split(/\??:/)[0]
+          )
+        }
+      }
+
+      if (outputTypesMatch[0] && outputTypesMatch[2]) {
+        let imports: string[]
+        let inputTypes: string
+
+        const pathInType = `InType<typeof ${basename(
+          path,
+          ".ts"
+        )}>`
+
+        let relPath = relative(
+          dirname(importPath),
+          path
+        ).replace(/\.ts$/, "")
+
+        if (!relPath.startsWith(".")) {
+          relPath = "./" + relPath
         }
 
-        if (outputTypesMatch[0] && outputTypesMatch[2]) {
-          let imports: string[]
-          let inputTypes: string
-
-          const pathInType = `InType<typeof ${basename(
+        imports = [
+          `import ${basename(
             path,
             ".ts"
-          )}>`
+          )} from "${relPath}"`,
+        ]
 
-          let relPath = relative(
-            dirname(importPath),
-            path
-          ).replace(/\.ts$/, "")
-
-          if (!relPath.startsWith(".")) {
-            relPath = "./" + relPath
-          }
+        if (prevImportPaths.length) {
+          imports.unshift(
+            'import { InType, OutType } from "io-type"'
+          )
+          inputTypes = `(\n  input: ${pathInType} &\n    ${prevImportPaths
+            .map(
+              ([p, t], i) =>
+                `OutType<typeof ${basename(p, ".ts")}>${
+                  prevImportPaths.length - 1 === i
+                    ? ""
+                    : " &"
+                } // ${t.join(", ")}`
+            )
+            .join("\n    ")}\n)`
 
           imports = [
-            `import ${basename(
-              path,
-              ".ts"
-            )} from "${relPath}"`,
+            ...imports,
+            ...prevImportPaths
+              .map(([p]) => {
+                let relPath = relative(
+                  dirname(importPath),
+                  p
+                ).replace(/\.ts$/, "")
+
+                if (!relPath.startsWith(".")) {
+                  relPath = "./" + relPath
+                }
+
+                if (
+                  !importData.includes(
+                    `import ${basename(p, ".ts")} `
+                  )
+                ) {
+                  return `import ${basename(
+                    p,
+                    ".ts"
+                  )} from "${relPath}"`
+                }
+              })
+              .filter((str) => str),
           ]
-
-          if (prevImportPaths.length) {
-            imports.unshift(
-              'import { InType, OutType } from "io-type"'
-            )
-            inputTypes = `(\n  input: ${pathInType} &\n    ${prevImportPaths
-              .map(
-                ([p, t], i) =>
-                  `OutType<typeof ${basename(p, ".ts")}>${
-                    prevImportPaths.length - 1 === i
-                      ? ""
-                      : " &"
-                  } // ${t.join(", ")}`
-              )
-              .join("\n    ")}\n)`
-
-            imports = [
-              ...imports,
-              ...prevImportPaths
-                .map(([p]) => {
-                  let relPath = relative(
-                    dirname(importPath),
-                    p
-                  ).replace(/\.ts$/, "")
-
-                  if (!relPath.startsWith(".")) {
-                    relPath = "./" + relPath
-                  }
-
-                  if (
-                    !importData.includes(
-                      `import ${basename(p, ".ts")} `
-                    )
-                  ) {
-                    return `import ${basename(
-                      p,
-                      ".ts"
-                    )} from "${relPath}"`
-                  }
-                })
-                .filter((str) => str),
-            ]
-          } else {
-            imports.unshift(
-              'import { InType } from "io-type"'
-            )
-            inputTypes = `(\n  input: ${pathInType}\n)`
-          }
-
-          await fileReplacer({
-            fsExtra,
-            data: importData,
-            dest: importPath,
-            replacements: [
-              {
-                search:
-                  outputTypesMatch[0] + outputTypesMatch[2],
-                replace: outputTypesMatch[0] + inputTypes,
-              },
-              {
-                search: /^/,
-                replace: imports.join("\n") + "\n\n",
-              },
-            ],
-          })
+        } else {
+          imports.unshift(
+            'import { InType } from "io-type"'
+          )
+          inputTypes = `(\n  input: ${pathInType}\n)`
         }
 
-        prevImportPaths.push([importPath, outputTypeIds])
+        await fileReplacer({
+          fsExtra,
+          data: importData,
+          dest: importPath,
+          replacements: [
+            {
+              search:
+                outputTypesMatch[0] + outputTypesMatch[2],
+              replace: outputTypesMatch[0] + inputTypes,
+            },
+            {
+              search: /^/,
+              replace: imports.join("\n") + "\n\n",
+            },
+          ],
+        })
       }
+
+      prevImportPaths.push([importPath, outputTypeIds])
     }
   }
 }

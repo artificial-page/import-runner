@@ -1,10 +1,10 @@
 import { join } from "path"
 import expect from "expect"
 import fsExtra from "fs-extra"
-import importRunnerCall from "./importRunnerCall"
+import importRunnerFlow from "./importRunnerFlow"
 import importRunnerImport from "./importRunnerImport"
 
-describe("importRunnerCall", () => {
+describe("importRunnerFlow", () => {
   it("parses", async () => {
     const data = (
       await fsExtra.readFile(
@@ -18,7 +18,7 @@ describe("importRunnerCall", () => {
     const { importVarName } = importRunnerImport({ data })
 
     expect(
-      importRunnerCall({ data, importVarName })
+      importRunnerFlow({ data, importVarName })
     ).toEqual({
       flow: {
         all: [
@@ -34,6 +34,19 @@ describe("importRunnerCall", () => {
           },
         ],
       },
+      flowPaths: [
+        "./importRunnerFixture",
+        "./importRunnerFixture2",
+        "./importRunnerFixture3",
+        "./importRunnerFixture",
+        "./importRunnerFixture2",
+        "./importRunnerFixture3",
+      ],
+      flowPathsUnique: [
+        "./importRunnerFixture",
+        "./importRunnerFixture2",
+        "./importRunnerFixture3",
+      ],
     })
   })
 })
