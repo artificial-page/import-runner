@@ -10,7 +10,7 @@ describe("importRunnerFlow", () => {
       await fsExtra.readFile(
         join(
           __dirname,
-          "../../../src/sourceProcessorFixture.ts"
+          "../../../src/fixtures/sourceProcessorFixture.ts"
         )
       )
     ).toString()

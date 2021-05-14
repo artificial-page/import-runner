@@ -1,4 +1,4 @@
-import importRunner from "./importRunner"
+import importRunner from "../importRunner"
 
 export default async function sourceProcessorFixture(memo: {
   hi: boolean

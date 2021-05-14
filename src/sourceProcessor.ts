@@ -3,6 +3,7 @@ import fileReplacerType from "file-replacer"
 import fsExtraType from "fs-extra"
 import importRunnerImport from "./parsers/importRunnerImport"
 import importRunnerFlow from "./parsers/importRunnerFlow"
+import importRunnerImportReplacer from "./replacers/importRunnerImport"
 
 export const runnerImportRegex =
   /import ([^\s]+) from "(\.?\/?importRunner)"/
@@ -63,22 +64,7 @@ export async function sourceProcessor({
             "s"
           ),
         },
-        {
-          replace: (m, p1, p2) =>
-            [`import ${p1} from "${p2}"`, ...imports].join(
-              "\n"
-            ),
-          search: runnerImportRegex,
-        },
-        {
-          replace: (m, p1, p2) =>
-            [
-              'import { OutType } from "io-type"',
-              `import ${p1} from "${p2}"`,
-            ].join("\n"),
-          search: runnerImportRegex,
-          condition: (body) => !body.match(/\sOutType\s/),
-        },
+        ...importRunnerImportReplacer({ imports }),
       ],
     })
 

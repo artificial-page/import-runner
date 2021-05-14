@@ -5,14 +5,14 @@ import {
   getLastCall,
   setDelay,
   reset,
-} from "./importRunnerFixture"
+} from "./fixtures/importRunnerFixture"
 
 describe("importRunner", () => {
   beforeEach(reset)
 
   it("runs with promise", async () => {
     const out = await importRunner({
-      promise: import("./importRunnerFixture"),
+      promise: import("./fixtures/importRunnerFixture"),
     })
     const { id } = getLastCall()
     expect(out).toEqual({ id })
@@ -25,8 +25,8 @@ describe("importRunner", () => {
     const out = await importRunner({
       memo: { test: true },
       each: [
-        import("./importRunnerFixture"),
-        import("./importRunnerFixture"),
+        import("./fixtures/importRunnerFixture"),
+        import("./fixtures/importRunnerFixture"),
       ],
     })
 
@@ -50,8 +50,8 @@ describe("importRunner", () => {
     const out = await importRunner({
       memo: { test: true },
       all: [
-        import("./importRunnerFixture"),
-        import("./importRunnerFixture"),
+        import("./fixtures/importRunnerFixture"),
+        import("./fixtures/importRunnerFixture"),
       ],
     })
 
@@ -71,12 +71,12 @@ describe("importRunner", () => {
 
     const out = await importRunner({
       each: [
-        import("./importRunnerFixture"),
-        import("./importRunnerFixture"),
+        import("./fixtures/importRunnerFixture"),
+        import("./fixtures/importRunnerFixture"),
         {
           all: [
-            import("./importRunnerFixture"),
-            import("./importRunnerFixture"),
+            import("./fixtures/importRunnerFixture"),
+            import("./fixtures/importRunnerFixture"),
           ],
         },
       ],

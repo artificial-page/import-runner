@@ -1,5 +1,5 @@
 export const regex =
-  /import ([^\s]+) from "(\.?\/?importRunner)"/
+  /import ([^\s]+) from "([\.\/]*importRunner)"/
 
 export default ({
   data,

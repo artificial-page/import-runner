@@ -9,14 +9,14 @@ describe("importRunnerImport", () => {
       await fsExtra.readFile(
         join(
           __dirname,
-          "../../../src/sourceProcessorFixture.ts"
+          "../../../src/fixtures/sourceProcessorFixture.ts"
         )
       )
     ).toString()
 
     expect(importRunnerImport({ data })).toEqual({
       importStr:
-        'import importRunner from "./importRunner"',
+        'import importRunner from "../importRunner"',
       importVarName: "importRunner",
     })
   })

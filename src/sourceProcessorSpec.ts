@@ -3,7 +3,7 @@ import fileReplacer from "file-replacer"
 import fsExtra from "fs-extra"
 import path from "path"
 import sourceProcessor from "./sourceProcessor"
-import { reset } from "./importRunnerFixture"
+import { reset } from "./fixtures/importRunnerFixture"
 
 describe("sourceProcessor", () => {
   beforeEach(reset)
@@ -23,7 +23,7 @@ describe("sourceProcessor", () => {
         fsExtra,
         src: path.join(
           __dirname,
-          `../../src/${tmpFile}.ts`
+          `../../src/fixtures/${tmpFile}.ts`
         ),
         dest: tmpPath,
       })
@@ -44,7 +44,7 @@ describe("sourceProcessor", () => {
         await fsExtra.readFile(
           path.join(
             __dirname,
-            "../../src/sourceProcessorPostFixture.ts"
+            "../../src/fixtures/sourceProcessorPostFixture.ts"
           )
         )
       ).toString()
@@ -61,7 +61,7 @@ describe("sourceProcessor", () => {
         await fsExtra.readFile(
           path.join(
             __dirname,
-            "../../src/importRunnerProcessedFixture.ts"
+            "../../src/fixtures/importRunnerProcessedFixture.ts"
           )
         )
       ).toString()
@@ -78,7 +78,7 @@ describe("sourceProcessor", () => {
         await fsExtra.readFile(
           path.join(
             __dirname,
-            "../../src/importRunnerProcessedFixture2.ts"
+            "../../src/fixtures/importRunnerProcessedFixture2.ts"
           )
         )
       ).toString()
@@ -95,7 +95,7 @@ describe("sourceProcessor", () => {
         await fsExtra.readFile(
           path.join(
             __dirname,
-            "../../src/importRunnerProcessedFixture3.ts"
+            "../../src/fixtures/importRunnerProcessedFixture3.ts"
           )
         )
       ).toString()

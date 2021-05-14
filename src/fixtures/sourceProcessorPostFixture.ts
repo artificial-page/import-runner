@@ -1,5 +1,5 @@
 import { OutType } from "io-type"
-import importRunner from "./importRunner"
+import importRunner from "../importRunner"
 import importRunnerFixture from "./importRunnerFixture"
 import importRunnerFixture2 from "./importRunnerFixture2"
 import importRunnerFixture3 from "./importRunnerFixture3"
