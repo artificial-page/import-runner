@@ -1,5 +1,5 @@
-./.husky
-./.vscode
-./bin
-./src
-./tsconfig.*
+.husky
+.vscode
+bin
+src
+tsconfig.*
