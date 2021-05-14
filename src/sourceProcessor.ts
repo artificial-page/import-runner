@@ -5,19 +5,7 @@ import importRunnerImport from "./parsers/importRunnerImport"
 import importRunnerFlow from "./parsers/importRunnerFlow"
 import importRunnerImportReplacer from "./replacers/importRunnerImport"
 import defaultOutputTypeReplacer from "./replacers/defaultOutputType"
-
-export const runnerImportRegex =
-  /import ([^\s]+) from "(\.?\/?importRunner)"/
-
-export const fnRegexString = "\\({(.+)(?=\\n\\s\\s})"
-
-export const dynamicImportRegex = /import\(\s*["'][^"']+/g
-
-export const outputTypeRegexString =
-  "}\\):\\s(Promise<Record<string,\\sany>>|Promise<any>|any)\\s{"
-
-export const defaultFunctionOutputTypeRegex =
-  /export default (.+)(?=(\([^)]*\)):\s(Promise<)?(\{.+})>\s(=>|{))/s
+import defaultOutputType from "./parsers/defaultOutputType"
 
 export async function sourceProcessor({
   path,
@@ -57,10 +45,7 @@ export async function sourceProcessor({
       data,
       dest: path,
       replacements: [
-        ...defaultOutputTypeReplacer({
-          importVarName,
-          outputTypes,
-        }),
+        ...defaultOutputTypeReplacer({ outputTypes }),
         ...importRunnerImportReplacer({ imports }),
       ],
     })
@@ -77,25 +62,23 @@ export async function sourceProcessor({
         await fsExtra.readFile(importPath)
       ).toString()
 
-      const outputTypesMatch =
-        importData.match(defaultFunctionOutputTypeRegex) ||
-        []
+      const { outputTypeMatch, outputType } =
+        defaultOutputType({
+          data: importData,
+        })
 
       let outputTypeIds = []
 
-      if (outputTypesMatch[4]) {
-        const outputTypes = outputTypesMatch[4]
+      if (outputType) {
         const outputTypeIdsMatch =
-          outputTypes.match(/\w+\??:/g)
+          outputType.match(/\w+\??:/g)
 
         if (outputTypeIdsMatch) {
           outputTypeIds = outputTypeIdsMatch.map(
             (str) => str.split(/\??:/)[0]
           )
         }
-      }
 
-      if (outputTypesMatch[0] && outputTypesMatch[2]) {
         let imports: string[]
         let inputTypes: string
 
@@ -175,8 +158,13 @@ export async function sourceProcessor({
           replacements: [
             {
               search:
-                outputTypesMatch[0] + outputTypesMatch[2],
-              replace: outputTypesMatch[0] + inputTypes,
+                outputTypeMatch[1] +
+                outputTypeMatch[2] +
+                outputTypeMatch[3],
+              replace:
+                outputTypeMatch[1] +
+                outputTypeMatch[2] +
+                inputTypes,
             },
             {
               search: /^/,

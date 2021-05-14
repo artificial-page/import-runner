@@ -1,17 +1,22 @@
 export const regex =
-  "}\\):\\s(Promise<Record<string,\\sany>>|Promise<any>|any)\\s{"
+  /(export default )(.+)(\([^)]*\))(:\s*)(Promise<)?(\{.+}|any)(>)?(\s*)(=>|{)/s
 
 export default ({
   data,
 }: {
   data: string
 }): {
-  defaultOutputMatch: string
-  defaultOutputType: string
+  outputTypeMatch?: RegExpMatchArray
+  outputType?: string
 } => {
   const match = data.match(regex)
-  return {
-    defaultOutputMatch: match[0],
-    defaultOutputType: match[1],
+
+  if (match) {
+    return {
+      outputTypeMatch: match,
+      outputType: match[6],
+    }
   }
+
+  return {}
 }
