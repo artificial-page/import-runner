@@ -2,7 +2,9 @@ import { basename, dirname, join, relative } from "path"
 import fileReplacerType from "file-replacer"
 import fsExtraType from "fs-extra"
 import importRunnerImport from "./parsers/importRunnerImport"
-import importRunnerFlow from "./parsers/importRunnerFlow"
+import importRunnerFlow, {
+  FlowType,
+} from "./parsers/importRunnerFlow"
 import importRunnerImportReplacer from "./replacers/importRunnerImport"
 import defaultOutputTypeReplacer from "./replacers/defaultOutputType"
 import defaultOutputType from "./parsers/defaultOutputType"
@@ -24,10 +26,11 @@ export async function sourceProcessor({
   })
 
   if (importVarName) {
-    const { flowPathsUnique } = importRunnerFlow({
-      data,
-      importVarName,
-    })
+    const { flowPathsUnique, flowPaths, flow } =
+      importRunnerFlow({
+        data,
+        importVarName,
+      })
 
     const imports = flowPathsUnique.map(
       (str) => `import ${basename(str)} from "${str}"`
@@ -53,14 +56,70 @@ export async function sourceProcessor({
 
     const prevImportPaths = []
 
-    for (const flowPath of flowPathsUnique) {
-      await processFlowPath({
-        fileReplacer,
-        flowPath,
-        fsExtra,
-        path,
-        prevImportPaths,
-      })
+    await processFlow({
+      fileReplacer,
+      flow,
+      flowPaths,
+      fsExtra,
+      path,
+      prevImportPaths,
+    })
+  }
+}
+
+export async function processFlow({
+  flow,
+  flowPaths,
+  fileReplacer,
+  fsExtra,
+  path,
+  prevImportPaths,
+}: {
+  flow: FlowType
+  flowPaths: string[]
+  fileReplacer: typeof fileReplacerType
+  fsExtra: typeof fsExtraType
+  path: string
+  prevImportPaths: [string, string[]][]
+}): Promise<void> {
+  for (const flowKey in flow) {
+    if (flowKey === "all" || flowKey === "each") {
+      const lockedPrevPaths = prevImportPaths.concat([])
+
+      for (const flowPath of flow[flowKey]) {
+        if (typeof flowPath === "string") {
+          const nextFlowPath = flowPaths.shift()
+
+          if (flowPath !== nextFlowPath) {
+            throw new Error("flow path mismatch")
+          }
+
+          // Don't process paths that exists further down the flow
+          if (flowPaths.includes(flowPath)) {
+            continue
+          }
+
+          await processFlowPath({
+            fileReplacer,
+            flowPath,
+            fsExtra,
+            path,
+            prevImportPaths:
+              flowKey === "all"
+                ? lockedPrevPaths
+                : prevImportPaths,
+          })
+        } else {
+          await processFlow({
+            flow: flowPath,
+            flowPaths,
+            fileReplacer,
+            fsExtra,
+            path,
+            prevImportPaths,
+          })
+        }
+      }
     }
   }
 }

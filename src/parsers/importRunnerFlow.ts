@@ -5,6 +5,11 @@ export const flowRegex = /\s{4}((all|each):\s\[.+)/s
 export const importRegex = /import\((["'][^"']+["'])\)/g
 export const keyRegex = /(\w+):/g
 
+export interface FlowType {
+  all?: (FlowType | string)[]
+  each?: (FlowType | string)[]
+}
+
 export default ({
   data,
   importVarName,
@@ -12,7 +17,7 @@ export default ({
   data: string
   importVarName: string
 }): {
-  flow?: ImportRunnerInput
+  flow?: FlowType
   flowPaths?: string[]
   flowPathsUnique?: string[]
 } => {
