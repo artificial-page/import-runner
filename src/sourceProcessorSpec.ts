@@ -30,35 +30,38 @@ describe("sourceProcessor", () => {
   beforeEach(reset)
 
   it("runs", async () => {
-    const tmpFiles = [
+    const fixtures = [
       "sourceProcessor",
       "importRunner",
       "importRunner2",
       "importRunner3",
     ]
 
-    for (const tmpFile of tmpFiles) {
-      const tmpPath = `/tmp/${tmpFile}Fixture.ts`
+    // Copy fixtures to tmp
+    for (const fixture of fixtures) {
+      const tmpPath = `/tmp/${fixture}Fixture.ts`
 
       await fileReplacer({
         fsExtra,
         src: path.join(
           __dirname,
-          `../../src/fixtures/${tmpFile}Fixture.ts`
+          `../../src/fixtures/${fixture}Fixture.ts`
         ),
         dest: tmpPath,
       })
     }
 
+    // Process sourceProcessorFixture
     await sourceProcessor({
       fileReplacer,
       fsExtra,
       path: "/tmp/sourceProcessorFixture.ts",
     })
 
-    for (const tmpFile of tmpFiles) {
-      expect(await readTmpFixture(tmpFile)).toBe(
-        await readSrcFixture(`${tmpFile}Post`)
+    // Compare with "post" fixtures
+    for (const fixture of fixtures) {
+      expect(await readTmpFixture(fixture)).toBe(
+        await readSrcFixture(`${fixture}Post`)
       )
     }
   })
