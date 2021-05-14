@@ -10,7 +10,7 @@ npm install import-runner
 
 ## 🏃 Run
 
-Import runner provides a shorthand for executing complex control flows:
+Import runner provides a shorthand for executing complex control flows using dynamic imports:
 
 ```typescript
 import importRunner from "import-runner"
