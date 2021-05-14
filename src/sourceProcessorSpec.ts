@@ -31,47 +31,35 @@ describe("sourceProcessor", () => {
 
   it("runs", async () => {
     const tmpFiles = [
-      "sourceProcessorFixture",
-      "importRunnerFixture",
-      "importRunner2Fixture",
-      "importRunner3Fixture",
+      "sourceProcessor",
+      "importRunner",
+      "importRunner2",
+      "importRunner3",
     ]
 
     for (const tmpFile of tmpFiles) {
-      const tmpPath = `/tmp/${tmpFile}.ts`
+      const tmpPath = `/tmp/${tmpFile}Fixture.ts`
 
       await fileReplacer({
         fsExtra,
         src: path.join(
           __dirname,
-          `../../src/fixtures/${tmpFile}.ts`
+          `../../src/fixtures/${tmpFile}Fixture.ts`
         ),
         dest: tmpPath,
       })
     }
 
-    const tmpPath = "/tmp/sourceProcessorFixture.ts"
-
     await sourceProcessor({
       fileReplacer,
       fsExtra,
-      path: tmpPath,
+      path: "/tmp/sourceProcessorFixture.ts",
     })
 
-    expect(await readTmpFixture("sourceProcessor")).toBe(
-      await readSrcFixture("sourceProcessorPost")
-    )
-
-    expect(await readTmpFixture("importRunner")).toBe(
-      await readSrcFixture("importRunnerProcessed")
-    )
-
-    expect(await readTmpFixture("importRunner2")).toBe(
-      await readSrcFixture("importRunnerProcessed2")
-    )
-
-    expect(await readTmpFixture("importRunner3")).toBe(
-      await readSrcFixture("importRunnerProcessed3")
-    )
+    for (const tmpFile of tmpFiles) {
+      expect(await readTmpFixture(tmpFile)).toBe(
+        await readSrcFixture(`${tmpFile}Post`)
+      )
+    }
   })
 })
