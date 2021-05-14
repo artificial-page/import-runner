@@ -2,13 +2,13 @@ import { InType, OutType } from "io-type"
 import sourceProcessorFixture from "./sourceProcessorFixture"
 import importRunner2Fixture from "./importRunner2Fixture"
 
-import importRunnerFixture from "./importRunnerFixture"
-export * from "./importRunnerFixture"
+import importRunner1Fixture from "./importRunner1Fixture"
+export * from "./importRunner1Fixture"
 
 export default async (
   input: InType<typeof sourceProcessorFixture> &
-    OutType<typeof importRunnerFixture> & // id, x
+    OutType<typeof importRunner1Fixture> & // id, x
     OutType<typeof importRunner2Fixture> // id
 ): Promise<{ id: string }> => {
-  return await importRunnerFixture(input)
+  return await importRunner1Fixture(input)
 }

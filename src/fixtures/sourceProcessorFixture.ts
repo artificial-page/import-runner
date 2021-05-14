@@ -6,12 +6,12 @@ export default async function sourceProcessorFixture(memo: {
   return await importRunner({
     memo,
     all: [
-      import("./importRunnerFixture"),
+      import("./importRunner1Fixture"),
       import("./importRunner2Fixture"),
       import("./importRunner3Fixture"),
       {
         each: [
-          import("./importRunnerFixture"),
+          import("./importRunner1Fixture"),
           import("./importRunner2Fixture"),
           import("./importRunner3Fixture"),
         ],

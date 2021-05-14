@@ -3,40 +3,19 @@ import fileReplacer from "file-replacer"
 import fsExtra from "fs-extra"
 import path from "path"
 import sourceProcessor from "./sourceProcessor"
-import { reset } from "./fixtures/importRunnerFixture"
+import { reset } from "./fixtures/importRunner1Fixture"
 
-export async function readSrcFixture(
-  name: string
-): Promise<string> {
-  return (
-    await fsExtra.readFile(
-      path.join(
-        __dirname,
-        `../../src/fixtures/${name}Fixture.ts`
-      )
-    )
-  ).toString()
-}
-
-export async function readTmpFixture(
-  name: string
-): Promise<string> {
-  return (
-    await fsExtra.readFile(`/tmp/${name}Fixture.ts`)
-  ).toString()
-}
+export const fixtures = [
+  "sourceProcessor",
+  "importRunner1",
+  "importRunner2",
+  "importRunner3",
+]
 
 describe("sourceProcessor", () => {
   beforeEach(reset)
 
   it("runs", async () => {
-    const fixtures = [
-      "sourceProcessor",
-      "importRunner",
-      "importRunner2",
-      "importRunner3",
-    ]
-
     // Copy fixtures to tmp
     for (const fixture of fixtures) {
       const tmpPath = `/tmp/${fixture}Fixture.ts`
@@ -66,3 +45,24 @@ describe("sourceProcessor", () => {
     }
   })
 })
+
+export async function readSrcFixture(
+  name: string
+): Promise<string> {
+  return (
+    await fsExtra.readFile(
+      path.join(
+        __dirname,
+        `../../src/fixtures/${name}Fixture.ts`
+      )
+    )
+  ).toString()
+}
+
+export async function readTmpFixture(
+  name: string
+): Promise<string> {
+  return (
+    await fsExtra.readFile(`/tmp/${name}Fixture.ts`)
+  ).toString()
+}

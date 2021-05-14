@@ -22,12 +22,12 @@ describe("importRunnerFlow", () => {
     ).toEqual({
       flow: {
         all: [
-          "./importRunnerFixture",
+          "./importRunner1Fixture",
           "./importRunner2Fixture",
           "./importRunner3Fixture",
           {
             each: [
-              "./importRunnerFixture",
+              "./importRunner1Fixture",
               "./importRunner2Fixture",
               "./importRunner3Fixture",
             ],
@@ -35,15 +35,15 @@ describe("importRunnerFlow", () => {
         ],
       },
       flowPaths: [
-        "./importRunnerFixture",
+        "./importRunner1Fixture",
         "./importRunner2Fixture",
         "./importRunner3Fixture",
-        "./importRunnerFixture",
+        "./importRunner1Fixture",
         "./importRunner2Fixture",
         "./importRunner3Fixture",
       ],
       flowPathsUnique: [
-        "./importRunnerFixture",
+        "./importRunner1Fixture",
         "./importRunner2Fixture",
         "./importRunner3Fixture",
       ],

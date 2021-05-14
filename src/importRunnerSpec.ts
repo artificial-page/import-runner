@@ -5,14 +5,14 @@ import {
   getLastCall,
   setDelay,
   reset,
-} from "./fixtures/importRunnerFixture"
+} from "./fixtures/importRunner1Fixture"
 
 describe("importRunner", () => {
   beforeEach(reset)
 
   it("runs with promise", async () => {
     const out = await importRunner({
-      promise: import("./fixtures/importRunnerFixture"),
+      promise: import("./fixtures/importRunner1Fixture"),
     })
     const { id } = getLastCall()
     expect(out).toEqual({ id })
@@ -25,8 +25,8 @@ describe("importRunner", () => {
     const out = await importRunner({
       memo: { test: true },
       each: [
-        import("./fixtures/importRunnerFixture"),
-        import("./fixtures/importRunnerFixture"),
+        import("./fixtures/importRunner1Fixture"),
+        import("./fixtures/importRunner1Fixture"),
       ],
     })
 
@@ -50,8 +50,8 @@ describe("importRunner", () => {
     const out = await importRunner({
       memo: { test: true },
       all: [
-        import("./fixtures/importRunnerFixture"),
-        import("./fixtures/importRunnerFixture"),
+        import("./fixtures/importRunner1Fixture"),
+        import("./fixtures/importRunner1Fixture"),
       ],
     })
 
@@ -71,12 +71,12 @@ describe("importRunner", () => {
 
     const out = await importRunner({
       each: [
-        import("./fixtures/importRunnerFixture"),
-        import("./fixtures/importRunnerFixture"),
+        import("./fixtures/importRunner1Fixture"),
+        import("./fixtures/importRunner1Fixture"),
         {
           all: [
-            import("./fixtures/importRunnerFixture"),
-            import("./fixtures/importRunnerFixture"),
+            import("./fixtures/importRunner1Fixture"),
+            import("./fixtures/importRunner1Fixture"),
           ],
         },
       ],
@@ -97,12 +97,12 @@ describe("importRunner", () => {
 
     const out = await importRunner({
       all: [
-        import("./fixtures/importRunnerFixture"),
-        import("./fixtures/importRunnerFixture"),
+        import("./fixtures/importRunner1Fixture"),
+        import("./fixtures/importRunner1Fixture"),
         {
           each: [
-            import("./fixtures/importRunnerFixture"),
-            import("./fixtures/importRunnerFixture"),
+            import("./fixtures/importRunner1Fixture"),
+            import("./fixtures/importRunner1Fixture"),
           ],
         },
       ],
