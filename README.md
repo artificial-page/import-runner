@@ -46,7 +46,7 @@ export async function thisThat(
 | `each` | Sequentially execute an array of functions (may be nested) |
 | `memo` | An object that acts as input and output for function calls (root only) |
 
-> ℹ️ Import runner looks for the default function of the import (`export default`)
+> ℹ️ Import runner looks for the default function of the dynamic import (`export default`)
 
 > ℹ️ When in `memo` mode and a function returns an object, it is merged with the memo via `Object.assign`
 
