@@ -23,29 +23,29 @@ describe("importRunnerFlow", () => {
       flow: {
         all: [
           "./importRunnerFixture",
-          "./importRunnerFixture2",
-          "./importRunnerFixture3",
+          "./importRunner2Fixture",
+          "./importRunner3Fixture",
           {
             each: [
               "./importRunnerFixture",
-              "./importRunnerFixture2",
-              "./importRunnerFixture3",
+              "./importRunner2Fixture",
+              "./importRunner3Fixture",
             ],
           },
         ],
       },
       flowPaths: [
         "./importRunnerFixture",
-        "./importRunnerFixture2",
-        "./importRunnerFixture3",
+        "./importRunner2Fixture",
+        "./importRunner3Fixture",
         "./importRunnerFixture",
-        "./importRunnerFixture2",
-        "./importRunnerFixture3",
+        "./importRunner2Fixture",
+        "./importRunner3Fixture",
       ],
       flowPathsUnique: [
         "./importRunnerFixture",
-        "./importRunnerFixture2",
-        "./importRunnerFixture3",
+        "./importRunner2Fixture",
+        "./importRunner3Fixture",
       ],
     })
   })

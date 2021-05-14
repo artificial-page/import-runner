@@ -5,6 +5,27 @@ import path from "path"
 import sourceProcessor from "./sourceProcessor"
 import { reset } from "./fixtures/importRunnerFixture"
 
+export async function readSrcFixture(
+  name: string
+): Promise<string> {
+  return (
+    await fsExtra.readFile(
+      path.join(
+        __dirname,
+        `../../src/fixtures/${name}Fixture.ts`
+      )
+    )
+  ).toString()
+}
+
+export async function readTmpFixture(
+  name: string
+): Promise<string> {
+  return (
+    await fsExtra.readFile(`/tmp/${name}Fixture.ts`)
+  ).toString()
+}
+
 describe("sourceProcessor", () => {
   beforeEach(reset)
 
@@ -12,8 +33,8 @@ describe("sourceProcessor", () => {
     const tmpFiles = [
       "sourceProcessorFixture",
       "importRunnerFixture",
-      "importRunnerFixture2",
-      "importRunnerFixture3",
+      "importRunner2Fixture",
+      "importRunner3Fixture",
     ]
 
     for (const tmpFile of tmpFiles) {
@@ -37,68 +58,20 @@ describe("sourceProcessor", () => {
       path: tmpPath,
     })
 
-    expect(
-      (await fsExtra.readFile(tmpPath)).toString()
-    ).toBe(
-      (
-        await fsExtra.readFile(
-          path.join(
-            __dirname,
-            "../../src/fixtures/sourceProcessorPostFixture.ts"
-          )
-        )
-      ).toString()
+    expect(await readTmpFixture("sourceProcessor")).toBe(
+      await readSrcFixture("sourceProcessorPost")
     )
 
-    expect(
-      (
-        await fsExtra.readFile(
-          "/tmp/importRunnerFixture.ts"
-        )
-      ).toString()
-    ).toBe(
-      (
-        await fsExtra.readFile(
-          path.join(
-            __dirname,
-            "../../src/fixtures/importRunnerProcessedFixture.ts"
-          )
-        )
-      ).toString()
+    expect(await readTmpFixture("importRunner")).toBe(
+      await readSrcFixture("importRunnerProcessed")
     )
 
-    expect(
-      (
-        await fsExtra.readFile(
-          "/tmp/importRunnerFixture2.ts"
-        )
-      ).toString()
-    ).toBe(
-      (
-        await fsExtra.readFile(
-          path.join(
-            __dirname,
-            "../../src/fixtures/importRunnerProcessedFixture2.ts"
-          )
-        )
-      ).toString()
+    expect(await readTmpFixture("importRunner2")).toBe(
+      await readSrcFixture("importRunnerProcessed2")
     )
 
-    expect(
-      (
-        await fsExtra.readFile(
-          "/tmp/importRunnerFixture3.ts"
-        )
-      ).toString()
-    ).toBe(
-      (
-        await fsExtra.readFile(
-          path.join(
-            __dirname,
-            "../../src/fixtures/importRunnerProcessedFixture3.ts"
-          )
-        )
-      ).toString()
+    expect(await readTmpFixture("importRunner3")).toBe(
+      await readSrcFixture("importRunnerProcessed3")
     )
   })
 })

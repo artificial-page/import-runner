@@ -91,4 +91,30 @@ describe("importRunner", () => {
       { args: [{ id }], delayed: false },
     ])
   })
+
+  it("runs with all -> each", async () => {
+    setDelay(5)
+
+    const out = await importRunner({
+      all: [
+        import("./fixtures/importRunnerFixture"),
+        import("./fixtures/importRunnerFixture"),
+        {
+          each: [
+            import("./fixtures/importRunnerFixture"),
+            import("./fixtures/importRunnerFixture"),
+          ],
+        },
+      ],
+    })
+
+    const { id } = getLastCall()
+    expect(out).toEqual({ id })
+    expect(getCalls()).toEqual([
+      { args: [{ id }], delayed: false },
+      { args: [{ id }], delayed: false },
+      { args: [{ id }], delayed: false },
+      { args: [{ id }], delayed: true },
+    ])
+  })
 })

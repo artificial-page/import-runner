@@ -7,13 +7,13 @@ export default async function sourceProcessorFixture(memo: {
     memo,
     all: [
       import("./importRunnerFixture"),
-      import("./importRunnerFixture2"),
-      import("./importRunnerFixture3"),
+      import("./importRunner2Fixture"),
+      import("./importRunner3Fixture"),
       {
         each: [
           import("./importRunnerFixture"),
-          import("./importRunnerFixture2"),
-          import("./importRunnerFixture3"),
+          import("./importRunner2Fixture"),
+          import("./importRunner3Fixture"),
         ],
       },
     ],
