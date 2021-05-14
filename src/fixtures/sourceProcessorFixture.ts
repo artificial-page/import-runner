@@ -13,6 +13,12 @@ export default async function sourceProcessorFixture(memo: {
         each: [
           import("./importRunner1Fixture"),
           import("./importRunner2Fixture"),
+          {
+            all: [
+              import("./importRunner4Fixture"),
+              import("./importRunner5Fixture"),
+            ],
+          },
           import("./importRunner3Fixture"),
         ],
       },

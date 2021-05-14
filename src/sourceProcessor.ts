@@ -94,21 +94,23 @@ export async function processFlow({
             throw new Error("flow path mismatch")
           }
 
-          // Don't process paths that exists further down the flow
+          // Don't process paths that exist further down the flow
           if (flowPaths.includes(flowPath)) {
             continue
           }
 
-          await processFlowPath({
-            fileReplacer,
-            flowPath,
-            fsExtra,
-            path,
-            prevImportPaths:
-              flowKey === "all"
-                ? lockedPrevPaths
-                : prevImportPaths,
-          })
+          prevImportPaths.push(
+            await processFlowPath({
+              fileReplacer,
+              flowPath,
+              fsExtra,
+              path,
+              prevImportPaths:
+                flowKey === "all"
+                  ? lockedPrevPaths
+                  : prevImportPaths,
+            })
+          )
         } else {
           await processFlow({
             flow: flowPath,
@@ -136,7 +138,7 @@ export async function processFlowPath({
   fsExtra: typeof fsExtraType
   path: string
   prevImportPaths: [string, string[]][]
-}): Promise<void> {
+}): Promise<[string, string[]]> {
   const importPath = join(dirname(path), flowPath + ".ts")
 
   const importData = (
@@ -236,7 +238,7 @@ export async function processFlowPath({
     })
   }
 
-  prevImportPaths.push([importPath, outputTypeIds])
+  return [importPath, outputTypeIds]
 }
 
 export function relPath({

@@ -10,6 +10,8 @@ export const fixtures = [
   "importRunner1",
   "importRunner2",
   "importRunner3",
+  "importRunner4",
+  "importRunner5",
 ]
 
 describe("sourceProcessor", () => {

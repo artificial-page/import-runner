@@ -29,6 +29,12 @@ describe("importRunnerFlow", () => {
             each: [
               "./importRunner1Fixture",
               "./importRunner2Fixture",
+              {
+                all: [
+                  "./importRunner4Fixture",
+                  "./importRunner5Fixture",
+                ],
+              },
               "./importRunner3Fixture",
             ],
           },
@@ -40,12 +46,16 @@ describe("importRunnerFlow", () => {
         "./importRunner3Fixture",
         "./importRunner1Fixture",
         "./importRunner2Fixture",
+        "./importRunner4Fixture",
+        "./importRunner5Fixture",
         "./importRunner3Fixture",
       ],
       flowPathsUnique: [
         "./importRunner1Fixture",
         "./importRunner2Fixture",
         "./importRunner3Fixture",
+        "./importRunner4Fixture",
+        "./importRunner5Fixture",
       ],
     })
   })
