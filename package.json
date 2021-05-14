@@ -5,10 +5,10 @@
   "main": "./dist/cjs/importRunner.js",
   "scripts": {
     "build": "./bin/build",
-    "postinstall": "husky install; npm run build",
     "start": "./bin/watch",
     "test": "NODE_ENV=\"${NODE_ENV:-test}\" mocha",
-    "update": "ncu -u"
+    "update": "ncu -u",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
