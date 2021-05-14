@@ -15,7 +15,9 @@ Import runner provides a shorthand for executing complex control flows using dyn
 ```typescript
 import importRunner from "import-runner"
 
-export async function thisThat(memo: { hi: boolean }): any {
+export async function thisThat(
+  memo: { hi: boolean }
+): Promise<any> {
   return await importRunner({
     memo,
     each: [
