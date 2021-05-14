@@ -42,7 +42,7 @@ export async function thisThat(
 
 > ℹ️ Import runner looks for the default function of the dynamic import (`export default`)
 
-> ℹ️ When in `memo` mode and a function returns an object, it is assigned to memo via `Object.assign`
+> ℹ️ If a function call returns an object, it is assigned to the memo (`Object.assign`)
 
 | Option | Description |
 | :--- | :--- |
