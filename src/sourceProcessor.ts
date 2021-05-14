@@ -6,6 +6,7 @@ import importRunnerFlow from "./parsers/importRunnerFlow"
 import importRunnerImportReplacer from "./replacers/importRunnerImport"
 import defaultOutputTypeReplacer from "./replacers/defaultOutputType"
 import defaultOutputType from "./parsers/defaultOutputType"
+import typeKeys from "./parsers/typeKeys"
 
 export async function sourceProcessor({
   path,
@@ -70,37 +71,26 @@ export async function sourceProcessor({
       let outputTypeIds = []
 
       if (outputType) {
-        const outputTypeIdsMatch =
-          outputType.match(/\w+\??:/g)
-
-        if (outputTypeIdsMatch) {
-          outputTypeIds = outputTypeIdsMatch.map(
-            (str) => str.split(/\??:/)[0]
-          )
-        }
-
-        let imports: string[]
-        let inputTypes: string
+        outputTypeIds = typeKeys({ types: outputType })
 
         const pathInType = `InType<typeof ${basename(
           path,
           ".ts"
         )}>`
 
-        let relPath = relative(
-          dirname(importPath),
-          path
-        ).replace(/\.ts$/, "")
+        const relImportPath = relPath({
+          fromPath: importPath,
+          toPath: path,
+        })
 
-        if (!relPath.startsWith(".")) {
-          relPath = "./" + relPath
-        }
+        let imports: string[]
+        let inputTypes: string
 
         imports = [
           `import ${basename(
             path,
             ".ts"
-          )} from "${relPath}"`,
+          )} from "${relImportPath}"`,
         ]
 
         if (prevImportPaths.length) {
@@ -122,14 +112,10 @@ export async function sourceProcessor({
             ...imports,
             ...prevImportPaths
               .map(([p]) => {
-                let relPath = relative(
-                  dirname(importPath),
-                  p
-                ).replace(/\.ts$/, "")
-
-                if (!relPath.startsWith(".")) {
-                  relPath = "./" + relPath
-                }
+                const relImportPath = relPath({
+                  fromPath: importPath,
+                  toPath: p,
+                })
 
                 if (
                   !importData.includes(
@@ -139,7 +125,7 @@ export async function sourceProcessor({
                   return `import ${basename(
                     p,
                     ".ts"
-                  )} from "${relPath}"`
+                  )} from "${relImportPath}"`
                 }
               })
               .filter((str) => str),
@@ -177,6 +163,25 @@ export async function sourceProcessor({
       prevImportPaths.push([importPath, outputTypeIds])
     }
   }
+}
+
+export function relPath({
+  fromPath,
+  toPath,
+}: {
+  fromPath: string
+  toPath: string
+}): string {
+  let rel = relative(dirname(fromPath), toPath).replace(
+    /\.ts$/,
+    ""
+  )
+
+  if (!rel.startsWith(".")) {
+    rel = "./" + rel
+  }
+
+  return rel
 }
 
 export default sourceProcessor
