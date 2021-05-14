@@ -1,0 +1,5 @@
+./.husky
+./.vscode
+./bin
+./src
+./tsconfig.*
