@@ -1,4 +1,4 @@
-import { ImportRunnerInput } from "importRunnerTypes"
+import { ImportRunnerInput } from "../importRunnerTypes"
 
 export const bodyRegexStr = "\\({(.+)(?=\\n\\s\\s})"
 export const flowRegex = /\s{4}((all|each):\s\[.+)/s
