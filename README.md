@@ -40,7 +40,7 @@ export async function thisThat(
 }
 ```
 
-> ℹ️ Import runner looks for the default function of the dynamic import (`export default`)
+> ℹ️ Import runner calls the default function of the dynamic import (`export default`)
 
 > ℹ️ If a function call returns an object, it is assigned to the memo (`Object.assign`)
 
