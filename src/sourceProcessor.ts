@@ -4,6 +4,7 @@ import fsExtraType from "fs-extra"
 import importRunnerImport from "./parsers/importRunnerImport"
 import importRunnerFlow from "./parsers/importRunnerFlow"
 import importRunnerImportReplacer from "./replacers/importRunnerImport"
+import defaultOutputTypeReplacer from "./replacers/defaultOutputType"
 
 export const runnerImportRegex =
   /import ([^\s]+) from "(\.?\/?importRunner)"/
@@ -56,14 +57,10 @@ export async function sourceProcessor({
       data,
       dest: path,
       replacements: [
-        {
-          replace: (m, p1, p2) =>
-            `}): Promise<\n  ${outputTypes}\n> {${p2}`,
-          search: new RegExp(
-            `${outputTypeRegexString}(.+)(?=${importVarName}\\({)`,
-            "s"
-          ),
-        },
+        ...defaultOutputTypeReplacer({
+          importVarName,
+          outputTypes,
+        }),
         ...importRunnerImportReplacer({ imports }),
       ],
     })
