@@ -1,5 +1,7 @@
 import { basename, dirname, join, relative } from "path"
-import fileReplacerType from "file-replacer"
+import fileReplacerType, {
+  ReplacementOutputType,
+} from "file-replacer"
 import fsExtraType from "fs-extra"
 import importRunnerImport from "./parsers/importRunnerImport"
 import importRunnerFlow, {
@@ -230,10 +232,15 @@ export async function processFlowPath({
             outputTypeMatch[2] +
             inputTypes,
         },
-        {
-          search: /^/,
-          replace: imports.join("\n") + "\n\n",
-        },
+        ...imports
+          .reverse()
+          .map((str, i): ReplacementOutputType[0] => {
+            return {
+              replace: str + "\n" + (i === 0 ? "\n" : ""),
+              search: /^/,
+              condition: (body) => !body.includes(str),
+            }
+          }),
       ],
     })
   }
