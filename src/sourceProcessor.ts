@@ -174,11 +174,6 @@ export async function processFlowPath({
       types: defaultFunctionOutputType,
     })
 
-    const relImportPath = relPath({
-      fromPath: importPath,
-      toPath: path,
-    })
-
     let imports: string[]
     let inputTypes: string
 
@@ -237,7 +232,7 @@ export async function processFlowPath({
         },
         ...imports
           .reverse()
-          .map((str, i): ReplacementOutputType[0] => {
+          .map((str): ReplacementOutputType[0] => {
             return {
               replace: str + "\n",
               search: /^/,
