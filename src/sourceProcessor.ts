@@ -8,8 +8,8 @@ import importRunnerFlow, {
   FlowType,
 } from "./parsers/importRunnerFlow"
 import importRunnerImportReplacer from "./replacers/importRunnerImport"
-import defaultOutputTypeReplacer from "./replacers/defaultOutputType"
-import defaultOutputType from "./parsers/defaultOutputType"
+import defaultFunctionReplacer from "./replacers/defaultFunction"
+import defaultFunction from "./parsers/defaultFunction"
 import typeKeys from "./parsers/typeKeys"
 
 export async function sourceProcessor({
@@ -34,6 +34,11 @@ export async function sourceProcessor({
         importVarName,
       })
 
+    const { defaultFunctionInputType: runnerInputType } =
+      defaultFunction({
+        data,
+      })
+
     const imports = flowPathsUnique.map(
       (str) => `import ${basename(str)} from "${str}"`
     )
@@ -50,8 +55,9 @@ export async function sourceProcessor({
       fsExtra,
       data,
       dest: path,
+      skipUnchanged: true,
       replacements: [
-        ...defaultOutputTypeReplacer({ outputTypes }),
+        ...defaultFunctionReplacer({ outputTypes }),
         ...importRunnerImportReplacer({ imports }),
       ],
     })
@@ -65,6 +71,7 @@ export async function sourceProcessor({
       fsExtra,
       path,
       prevImportPaths,
+      runnerInputType,
     })
   }
 }
@@ -76,6 +83,7 @@ export async function processFlow({
   fsExtra,
   path,
   prevImportPaths,
+  runnerInputType,
 }: {
   flow: FlowType
   flowPaths: string[]
@@ -83,6 +91,7 @@ export async function processFlow({
   fsExtra: typeof fsExtraType
   path: string
   prevImportPaths: [string, string[]][]
+  runnerInputType: string
 }): Promise<void> {
   for (const flowKey in flow) {
     if (flowKey === "all" || flowKey === "each") {
@@ -111,6 +120,7 @@ export async function processFlow({
                 flowKey === "all"
                   ? lockedPrevPaths
                   : prevImportPaths,
+              runnerInputType,
             })
           )
         } else {
@@ -121,6 +131,7 @@ export async function processFlow({
             fsExtra,
             path,
             prevImportPaths,
+            runnerInputType,
           })
         }
       }
@@ -134,12 +145,14 @@ export async function processFlowPath({
   fsExtra,
   path,
   prevImportPaths,
+  runnerInputType,
 }: {
   fileReplacer: typeof fileReplacerType
   flowPath: string
   fsExtra: typeof fsExtraType
   path: string
   prevImportPaths: [string, string[]][]
+  runnerInputType: string
 }): Promise<[string, string[]]> {
   const importPath = join(dirname(path), flowPath + ".ts")
 
@@ -147,19 +160,19 @@ export async function processFlowPath({
     await fsExtra.readFile(importPath)
   ).toString()
 
-  const { outputTypeMatch, outputType } = defaultOutputType(
-    { data: importData }
-  )
+  const {
+    defaultFunctionMatch,
+    defaultFunctionOutputType,
+  } = defaultFunction({
+    data: importData,
+  })
 
   let outputTypeIds = []
 
-  if (outputType) {
-    outputTypeIds = typeKeys({ types: outputType })
-
-    const pathInType = `InType<typeof ${basename(
-      path,
-      ".ts"
-    )}>`
+  if (defaultFunctionOutputType) {
+    outputTypeIds = typeKeys({
+      types: defaultFunctionOutputType,
+    })
 
     const relImportPath = relPath({
       fromPath: importPath,
@@ -169,19 +182,15 @@ export async function processFlowPath({
     let imports: string[]
     let inputTypes: string
 
-    imports = [
-      `import ${basename(
-        path,
-        ".ts"
-      )} from "${relImportPath}"`,
-    ]
+    imports = []
 
     if (prevImportPaths.length) {
-      imports.unshift(
-        'import { InType, OutType } from "io-type"'
-      )
+      imports.unshift('import { OutType } from "io-type"')
 
-      inputTypes = `(\n  input: ${pathInType} &\n    ${prevImportPaths
+      inputTypes = `(\n  input: ${runnerInputType.replace(
+        /\n/g,
+        "\n  "
+      )} & ${prevImportPaths
         .map(
           ([p, t], i) =>
             `OutType<typeof ${basename(p, ".ts")}>${
@@ -199,44 +208,38 @@ export async function processFlowPath({
               toPath: p,
             })
 
-            if (
-              !importData.includes(
-                `import ${basename(p, ".ts")} `
-              )
-            ) {
-              return `import ${basename(
-                p,
-                ".ts"
-              )} from "${relImportPath}"`
-            }
+            return `import ${basename(
+              p,
+              ".ts"
+            )} from "${relImportPath}"`
           })
           .filter((str) => str),
       ]
     } else {
-      imports.unshift('import { InType } from "io-type"')
-      inputTypes = `(\n  input: ${pathInType}\n)`
+      inputTypes = `(input: ${runnerInputType})`
     }
 
     await fileReplacer({
       fsExtra,
       data: importData,
       dest: importPath,
+      skipUnchanged: true,
       replacements: [
         {
           search:
-            outputTypeMatch[1] +
-            outputTypeMatch[2] +
-            outputTypeMatch[3],
+            defaultFunctionMatch[1] +
+            defaultFunctionMatch[2] +
+            defaultFunctionMatch[3],
           replace:
-            outputTypeMatch[1] +
-            outputTypeMatch[2] +
+            defaultFunctionMatch[1] +
+            defaultFunctionMatch[2] +
             inputTypes,
         },
         ...imports
           .reverse()
           .map((str, i): ReplacementOutputType[0] => {
             return {
-              replace: str + "\n" + (i === 0 ? "\n" : ""),
+              replace: str + "\n",
               search: /^/,
               condition: (body) => !body.includes(str),
             }

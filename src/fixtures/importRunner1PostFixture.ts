@@ -1,6 +1,3 @@
-import { InType } from "io-type"
-import sourceProcessorFixture from "./sourceProcessorFixture"
-
 let calls = []
 let delayMs: number
 
@@ -28,9 +25,9 @@ export function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-export default async (
-  input: InType<typeof sourceProcessorFixture>
-): Promise<{ id: string; x?: boolean }> => {
+export default async (input: {
+  hi: boolean
+}): Promise<{ id: string; x?: boolean }> => {
   const id = Math.random().toString(36).substr(2, 9)
 
   if (delayMs) {

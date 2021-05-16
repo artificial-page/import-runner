@@ -1,8 +1,8 @@
 import importRunner from "../importRunner"
 
-export default async function sourceProcessorFixture(memo: {
+export default async (memo: {
   hi: boolean
-}): Promise<any> {
+}): Promise<any> => {
   return await importRunner({
     memo,
     all: [

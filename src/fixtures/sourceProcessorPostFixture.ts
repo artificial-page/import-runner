@@ -6,7 +6,7 @@ import importRunner3Fixture from "./importRunner3Fixture"
 import importRunner4Fixture from "./importRunner4Fixture"
 import importRunner5Fixture from "./importRunner5Fixture"
 
-export default async function sourceProcessorFixture(memo: {
+export default async (memo: {
   hi: boolean
 }): Promise<
   OutType<typeof importRunner1Fixture> &
@@ -14,7 +14,7 @@ export default async function sourceProcessorFixture(memo: {
     OutType<typeof importRunner3Fixture> &
     OutType<typeof importRunner4Fixture> &
     OutType<typeof importRunner5Fixture>
-> {
+> => {
   return await importRunner({
     memo,
     all: [
