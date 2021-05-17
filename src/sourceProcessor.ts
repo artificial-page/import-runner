@@ -167,9 +167,21 @@ export async function processFlowPath({
 }): Promise<[string, string[]]> {
   const importPath = join(dirname(path), flowPath + ".ts")
 
-  const importData = (
-    await fsExtra.readFile(importPath)
-  ).toString()
+  let importData = /* typescript */ `
+    export default async (input: unknown): Promise<any> => {
+      return {}
+    }
+  `
+    .trimStart()
+    .replace(/\n\s{4}/g, "\n")
+
+  if (await fsExtra.pathExists(importPath)) {
+    importData = (
+      await fsExtra.readFile(importPath)
+    ).toString()
+  } else {
+    await fsExtra.writeFile(importPath, importData)
+  }
 
   const {
     defaultFunctionMatch,
