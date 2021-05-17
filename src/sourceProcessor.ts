@@ -183,9 +183,7 @@ export async function processFlowPath({
     export default async (input: unknown): Promise<any> => {
       return {}
     }
-  `
-    .trimStart()
-    .replace(/\n\s{4}/g, "\n")
+  `.replace(/\n\s{4}/g, "\n")
 
   if (await fsExtra.pathExists(importPath)) {
     importData = (
@@ -221,12 +219,14 @@ export async function processFlowPath({
         /\n/g,
         "\n  "
       )} & ${prevImportPaths
-        .map(
-          ([p, t], i) =>
-            `OutType<typeof ${basename(p, ".ts")}>${
-              prevImportPaths.length - 1 === i ? "" : " &"
-            } // ${t.join(", ")}`
+        .map(([p, t], i) =>
+          t
+            ? `OutType<typeof ${basename(p, ".ts")}>${
+                prevImportPaths.length - 1 === i ? "" : " &"
+              } // ${t.join(", ")}`
+            : undefined
         )
+        .filter((str) => str)
         .join("\n    ")}\n)`
 
       imports = [
