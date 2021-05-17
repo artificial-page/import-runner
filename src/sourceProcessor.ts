@@ -216,15 +216,18 @@ export async function processFlowPath({
     if (prevImportPaths.length) {
       imports.unshift('import { OutType } from "io-type"')
 
+      const inputTypePaths = prevImportPaths.filter(
+        ([, t]) => !!t
+      )
+
       inputTypes = `(\n  input: ${runnerInputType.replace(
         /\n/g,
         "\n  "
-      )} & ${prevImportPaths
-        .filter(([, t]) => !!t)
+      )} & ${inputTypePaths
         .map(
           ([p, t], i) =>
             `OutType<typeof ${basename(p, ".ts")}>${
-              prevImportPaths.length - 1 === i ? "" : " &"
+              inputTypePaths.length - 1 === i ? "" : " &"
             } // ${t.join(", ")}`
         )
         .join("\n    ")}\n)`
