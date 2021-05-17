@@ -14,9 +14,8 @@ export default ({
       toPath: p,
     })
 
-    return `import ${path.basename(
-      p,
-      ".ts"
-    )} from "${relImportPath}"`
+    const basename = path.basename(p, ".ts")
+
+    return `import ${basename} from "${relImportPath}"`
   })
 }

@@ -1,4 +1,4 @@
-import { basename, dirname, join } from "path"
+import { dirname, join } from "path"
 import { ESLint } from "eslint"
 import fileReplacerType, {
   ReplacementOutputType,
@@ -15,6 +15,7 @@ import typeKeys from "./parsers/typeKeys"
 import emptyDefaultFunction from "./coders/emptyDefaultFunction"
 import functionInputTypes from "./coders/functionInputTypes"
 import relativeImports from "./coders/relativeImports"
+import outTypeImport from "./coders/outTypeImport"
 
 export async function sourceProcessor({
   fileReplacer,
@@ -46,18 +47,6 @@ export async function sourceProcessor({
         data,
       })
 
-    const imports = flowPathsUnique.map(
-      (str) => `import ${basename(str)} from "${str}"`
-    )
-
-    const basenames = flowPathsUnique.map((str) =>
-      basename(str)
-    )
-
-    const outputTypes = basenames
-      .map((str) => `OutType<typeof ${str}>`)
-      .join(" &\n    ")
-
     promises.push(
       fileReplacer({
         fsExtra,
@@ -66,8 +55,10 @@ export async function sourceProcessor({
         eslint,
         skipUnchanged: true,
         replacements: [
-          ...defaultFunctionReplacer({ outputTypes }),
-          ...importRunnerImportReplacer({ imports }),
+          ...defaultFunctionReplacer({ flowPathsUnique }),
+          ...importRunnerImportReplacer({
+            flowPathsUnique,
+          }),
         ],
       })
     )
@@ -215,8 +206,6 @@ export async function processFlowPath({
     imports = []
 
     if (prevImportPaths.length) {
-      imports.unshift('import { OutType } from "io-type"')
-
       const inputTypePaths = prevImportPaths.filter(
         ([, t]) => !!t
       )
@@ -227,6 +216,7 @@ export async function processFlowPath({
       })
 
       imports = [
+        outTypeImport(),
         ...imports,
         ...relativeImports({ importPath, inputTypePaths }),
       ]
