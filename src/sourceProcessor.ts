@@ -190,6 +190,7 @@ export async function processFlowPath({
       await fsExtra.readFile(importPath)
     ).toString()
   } else {
+    await fsExtra.ensureFile(importPath)
     await fsExtra.writeFile(importPath, importData)
   }
 
