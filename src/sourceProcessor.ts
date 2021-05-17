@@ -24,6 +24,7 @@ export async function sourceProcessor({
   path: string
   eslint?: ESLint
 }): Promise<void> {
+  const promises = []
   const data = (await fsExtra.readFile(path)).toString()
 
   const { importVarName } = importRunnerImport({
@@ -54,17 +55,19 @@ export async function sourceProcessor({
       .map((str) => `OutType<typeof ${str}>`)
       .join(" &\n    ")
 
-    await fileReplacer({
-      fsExtra,
-      data,
-      dest: path,
-      eslint,
-      skipUnchanged: true,
-      replacements: [
-        ...defaultFunctionReplacer({ outputTypes }),
-        ...importRunnerImportReplacer({ imports }),
-      ],
-    })
+    promises.push(
+      fileReplacer({
+        fsExtra,
+        data,
+        dest: path,
+        eslint,
+        skipUnchanged: true,
+        replacements: [
+          ...defaultFunctionReplacer({ outputTypes }),
+          ...importRunnerImportReplacer({ imports }),
+        ],
+      })
+    )
 
     const prevImportPaths = []
 
@@ -76,9 +79,12 @@ export async function sourceProcessor({
       fsExtra,
       path,
       prevImportPaths,
+      promises,
       runnerInputType,
     })
   }
+
+  await Promise.all(promises)
 }
 
 export async function processFlow({
@@ -88,6 +94,7 @@ export async function processFlow({
   fsExtra,
   path,
   prevImportPaths,
+  promises,
   runnerInputType,
   eslint,
 }: {
@@ -97,6 +104,7 @@ export async function processFlow({
   fsExtra: typeof fsExtraType
   path: string
   prevImportPaths: [string, string[]][]
+  promises: Promise<any>[]
   runnerInputType: string
   eslint?: ESLint
 }): Promise<void> {
@@ -128,6 +136,7 @@ export async function processFlow({
                 flowKey === "all"
                   ? lockedPrevPaths
                   : prevImportPaths,
+              promises,
               runnerInputType,
             })
           )
@@ -140,6 +149,7 @@ export async function processFlow({
             fsExtra,
             path,
             prevImportPaths,
+            promises,
             runnerInputType,
           })
         }
@@ -154,6 +164,7 @@ export async function processFlowPath({
   fsExtra,
   path,
   prevImportPaths,
+  promises,
   runnerInputType,
   eslint,
 }: {
@@ -162,6 +173,7 @@ export async function processFlowPath({
   fsExtra: typeof fsExtraType
   path: string
   prevImportPaths: [string, string[]][]
+  promises: Promise<any>[]
   runnerInputType: string
   eslint?: ESLint
 }): Promise<[string, string[]]> {
@@ -237,34 +249,36 @@ export async function processFlowPath({
       inputTypes = `(input: ${runnerInputType})`
     }
 
-    await fileReplacer({
-      fsExtra,
-      data: importData,
-      dest: importPath,
-      eslint,
-      skipUnchanged: true,
-      replacements: [
-        {
-          search:
-            defaultFunctionMatch[1] +
-            defaultFunctionMatch[2] +
-            defaultFunctionMatch[3],
-          replace:
-            defaultFunctionMatch[1] +
-            defaultFunctionMatch[2] +
-            inputTypes,
-        },
-        ...imports
-          .reverse()
-          .map((str): ReplacementOutputType[0] => {
-            return {
-              replace: str + "\n",
-              search: /^/,
-              condition: (body) => !body.includes(str),
-            }
-          }),
-      ],
-    })
+    promises.push(
+      fileReplacer({
+        fsExtra,
+        data: importData,
+        dest: importPath,
+        eslint,
+        skipUnchanged: true,
+        replacements: [
+          {
+            search:
+              defaultFunctionMatch[1] +
+              defaultFunctionMatch[2] +
+              defaultFunctionMatch[3],
+            replace:
+              defaultFunctionMatch[1] +
+              defaultFunctionMatch[2] +
+              inputTypes,
+          },
+          ...imports
+            .reverse()
+            .map((str): ReplacementOutputType[0] => {
+              return {
+                replace: str + "\n",
+                search: /^/,
+                condition: (body) => !body.includes(str),
+              }
+            }),
+        ],
+      })
+    )
   }
 
   return [importPath, outputTypeIds]
