@@ -1,4 +1,4 @@
-import { basename, dirname, join, relative } from "path"
+import { basename, dirname, join } from "path"
 import { ESLint } from "eslint"
 import fileReplacerType, {
   ReplacementOutputType,
@@ -12,6 +12,9 @@ import importRunnerImportReplacer from "./replacers/importRunnerImport"
 import defaultFunctionReplacer from "./replacers/defaultFunction"
 import defaultFunction from "./parsers/defaultFunction"
 import typeKeys from "./parsers/typeKeys"
+import emptyDefaultFunction from "./coders/emptyDefaultFunction"
+import functionInputTypes from "./coders/functionInputTypes"
+import relativeImports from "./coders/relativeImports"
 
 export async function sourceProcessor({
   fileReplacer,
@@ -179,17 +182,15 @@ export async function processFlowPath({
 }): Promise<[string, string[]]> {
   const importPath = join(dirname(path), flowPath + ".ts")
 
-  let importData = /* typescript */ `
-    export default async (input: unknown): Promise<any> => {
-      return {}
-    }
-  `.replace(/\n\s{4}/g, "\n")
+  let importData: string
 
   if (await fsExtra.pathExists(importPath)) {
     importData = (
       await fsExtra.readFile(importPath)
     ).toString()
   } else {
+    importData = emptyDefaultFunction()
+
     await fsExtra.ensureFile(importPath)
     await fsExtra.writeFile(importPath, importData)
   }
@@ -220,31 +221,14 @@ export async function processFlowPath({
         ([, t]) => !!t
       )
 
-      inputTypes = `(\n  input: ${runnerInputType.replace(
-        /\n/g,
-        "\n  "
-      )} & ${inputTypePaths
-        .map(
-          ([p, t], i) =>
-            `OutType<typeof ${basename(p, ".ts")}>${
-              inputTypePaths.length - 1 === i ? "" : " &"
-            } // ${t.join(", ")}`
-        )
-        .join("\n    ")}\n)`
+      inputTypes = functionInputTypes({
+        inputTypePaths,
+        runnerInputType,
+      })
 
       imports = [
         ...imports,
-        ...inputTypePaths.map(([p]) => {
-          const relImportPath = relPath({
-            fromPath: importPath,
-            toPath: p,
-          })
-
-          return `import ${basename(
-            p,
-            ".ts"
-          )} from "${relImportPath}"`
-        }),
+        ...relativeImports({ importPath, inputTypePaths }),
       ]
     } else {
       inputTypes = `(input: ${runnerInputType})`
@@ -283,25 +267,6 @@ export async function processFlowPath({
   }
 
   return [importPath, outputTypeIds]
-}
-
-export function relPath({
-  fromPath,
-  toPath,
-}: {
-  fromPath: string
-  toPath: string
-}): string {
-  let rel = relative(dirname(fromPath), toPath).replace(
-    /\.ts$/,
-    ""
-  )
-
-  if (!rel.startsWith(".")) {
-    rel = "./" + rel
-  }
-
-  return rel
 }
 
 export default sourceProcessor
