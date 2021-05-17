@@ -234,19 +234,17 @@ export async function processFlowPath({
 
       imports = [
         ...imports,
-        ...prevImportPaths
-          .map(([p]) => {
-            const relImportPath = relPath({
-              fromPath: importPath,
-              toPath: p,
-            })
-
-            return `import ${basename(
-              p,
-              ".ts"
-            )} from "${relImportPath}"`
+        ...inputTypePaths.map(([p]) => {
+          const relImportPath = relPath({
+            fromPath: importPath,
+            toPath: p,
           })
-          .filter((str) => str),
+
+          return `import ${basename(
+            p,
+            ".ts"
+          )} from "${relImportPath}"`
+        }),
       ]
     } else {
       inputTypes = `(input: ${runnerInputType})`
