@@ -1,6 +1,6 @@
 export default (): string => {
   return /* typescript */ `
-    import importRunner from "../importRunner"
+    import importRunner from "import-runner"
 
     export default async (memo: {
       option: boolean
