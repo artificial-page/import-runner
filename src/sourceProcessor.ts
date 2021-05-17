@@ -220,14 +220,13 @@ export async function processFlowPath({
         /\n/g,
         "\n  "
       )} & ${prevImportPaths
-        .map(([p, t], i) =>
-          t
-            ? `OutType<typeof ${basename(p, ".ts")}>${
-                prevImportPaths.length - 1 === i ? "" : " &"
-              } // ${t.join(", ")}`
-            : undefined
+        .filter(([, t]) => !!t)
+        .map(
+          ([p, t], i) =>
+            `OutType<typeof ${basename(p, ".ts")}>${
+              prevImportPaths.length - 1 === i ? "" : " &"
+            } // ${t.join(", ")}`
         )
-        .filter((str) => str)
         .join("\n    ")}\n)`
 
       imports = [
