@@ -16,6 +16,7 @@ import emptyDefaultFunction from "./coders/emptyDefaultFunction"
 import functionInputTypes from "./coders/functionInputTypes"
 import relativeImports from "./coders/relativeImports"
 import outTypeImport from "./coders/outTypeImport"
+import emptyRunnerFunction from "coders/emptyRunnerFunction"
 
 export async function sourceProcessor({
   fileReplacer,
@@ -28,12 +29,19 @@ export async function sourceProcessor({
   path: string
   eslint?: ESLint
 }): Promise<void> {
-  const promises = []
-  const data = (await fsExtra.readFile(path)).toString()
+  if (!path.match(/Runner\.tsx?$/)) {
+    return
+  }
 
-  const { importVarName } = importRunnerImport({
-    data,
-  })
+  let data = (await fsExtra.readFile(path)).toString()
+
+  if (data.trim() === "") {
+    data = emptyRunnerFunction()
+    await fsExtra.writeFile(path, data)
+  }
+
+  const promises = []
+  const { importVarName } = importRunnerImport({ data })
 
   if (importVarName) {
     const { flowPathsUnique, flowPaths, flow } =
@@ -42,10 +50,12 @@ export async function sourceProcessor({
         importVarName,
       })
 
+    if (!flowPathsUnique) {
+      return
+    }
+
     const { defaultFunctionInputType: runnerInputType } =
-      defaultFunction({
-        data,
-      })
+      defaultFunction({ data })
 
     promises.push(
       fileReplacer({
