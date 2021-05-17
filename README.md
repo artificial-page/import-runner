@@ -59,15 +59,21 @@ This is where low code techniques come in. We can programmatically parse `import
 1. Generate the output type of function calling `importRunner`
 2. Generate the input type of each called function in the control flow
 
-Example code to process source files with [chokidar](https://github.com/paulmillr/chokidar), [file-replacer](https://github.com/artificial-page/file-replacer), and [fs-extra](https://github.com/jprichardson/node-fs-extra):
+Example code to process source files with [chokidar](https://github.com/paulmillr/chokidar), [eslint](https://github.com/eslint/eslint) (optional), [file-replacer](https://github.com/artificial-page/file-replacer), and [fs-extra](https://github.com/jprichardson/node-fs-extra):
 
 ```typescript
 import chokidar from "chokidar"
+import { ESLint } from "eslint"
 import fileReplacer from "file-replacer"
 import fsExtra from "fs-extra"
 import sourceProcessor from "import-runner/dist/cjs/sourceProcessor"
 
 chokidar.watch(".").on("change", (event, path) => {
-  sourceProcessor({ fileReplacer, fsExtra, path })
+  sourceProcessor({
+    eslint: new ESLint({ fix: true }),
+    fileReplacer,
+    fsExtra,
+    path,
+  })
 })
 ```

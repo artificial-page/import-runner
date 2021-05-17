@@ -1,4 +1,5 @@
 import { basename, dirname, join, relative } from "path"
+import { ESLint } from "eslint"
 import fileReplacerType, {
   ReplacementOutputType,
 } from "file-replacer"
@@ -13,13 +14,15 @@ import defaultFunction from "./parsers/defaultFunction"
 import typeKeys from "./parsers/typeKeys"
 
 export async function sourceProcessor({
-  path,
   fileReplacer,
   fsExtra,
+  path,
+  eslint,
 }: {
-  path: string
   fileReplacer: typeof fileReplacerType
   fsExtra: typeof fsExtraType
+  path: string
+  eslint?: ESLint
 }): Promise<void> {
   const data = (await fsExtra.readFile(path)).toString()
 
@@ -55,6 +58,7 @@ export async function sourceProcessor({
       fsExtra,
       data,
       dest: path,
+      eslint,
       skipUnchanged: true,
       replacements: [
         ...defaultFunctionReplacer({ outputTypes }),
@@ -65,6 +69,7 @@ export async function sourceProcessor({
     const prevImportPaths = []
 
     await processFlow({
+      eslint,
       fileReplacer,
       flow,
       flowPaths,
@@ -84,6 +89,7 @@ export async function processFlow({
   path,
   prevImportPaths,
   runnerInputType,
+  eslint,
 }: {
   flow: FlowType
   flowPaths: string[]
@@ -92,6 +98,7 @@ export async function processFlow({
   path: string
   prevImportPaths: [string, string[]][]
   runnerInputType: string
+  eslint?: ESLint
 }): Promise<void> {
   for (const flowKey in flow) {
     if (flowKey === "all" || flowKey === "each") {
@@ -112,6 +119,7 @@ export async function processFlow({
 
           prevImportPaths.push(
             await processFlowPath({
+              eslint,
               fileReplacer,
               flowPath,
               fsExtra,
@@ -125,6 +133,7 @@ export async function processFlow({
           )
         } else {
           await processFlow({
+            eslint,
             flow: flowPath,
             flowPaths,
             fileReplacer,
@@ -146,6 +155,7 @@ export async function processFlowPath({
   path,
   prevImportPaths,
   runnerInputType,
+  eslint,
 }: {
   fileReplacer: typeof fileReplacerType
   flowPath: string
@@ -153,6 +163,7 @@ export async function processFlowPath({
   path: string
   prevImportPaths: [string, string[]][]
   runnerInputType: string
+  eslint?: ESLint
 }): Promise<[string, string[]]> {
   const importPath = join(dirname(path), flowPath + ".ts")
 
@@ -218,6 +229,7 @@ export async function processFlowPath({
       fsExtra,
       data: importData,
       dest: importPath,
+      eslint,
       skipUnchanged: true,
       replacements: [
         {
