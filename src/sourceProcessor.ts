@@ -16,7 +16,7 @@ import emptyDefaultFunction from "./coders/emptyDefaultFunction"
 import functionInputTypes from "./coders/functionInputTypes"
 import relativeImports from "./coders/relativeImports"
 import outTypeImport from "./coders/outTypeImport"
-import emptyRunnerFunction from "coders/emptyRunnerFunction"
+import emptyRunnerFunction from "./coders/emptyRunnerFunction"
 
 export async function sourceProcessor({
   fileReplacer,

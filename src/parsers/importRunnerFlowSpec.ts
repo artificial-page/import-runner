@@ -10,7 +10,7 @@ describe("importRunnerFlow", () => {
       await fsExtra.readFile(
         join(
           __dirname,
-          "../../../src/fixtures/sourceProcessorFixture.ts"
+          "../../../src/fixtures/testRunner.ts"
         )
       )
     ).toString()
@@ -22,40 +22,37 @@ describe("importRunnerFlow", () => {
     ).toEqual({
       flow: {
         all: [
-          "./importRunner1Fixture",
-          "./importRunner2Fixture",
-          "./importRunner3Fixture",
+          "./function1",
+          "./function2",
+          "./function3",
           {
             each: [
-              "./importRunner1Fixture",
-              "./importRunner2Fixture",
+              "./function1",
+              "./function2",
               {
-                all: [
-                  "./importRunner4Fixture",
-                  "./importRunner5Fixture",
-                ],
+                all: ["./function4", "./function5"],
               },
-              "./importRunner3Fixture",
+              "./function3",
             ],
           },
         ],
       },
       flowPaths: [
-        "./importRunner1Fixture",
-        "./importRunner2Fixture",
-        "./importRunner3Fixture",
-        "./importRunner1Fixture",
-        "./importRunner2Fixture",
-        "./importRunner4Fixture",
-        "./importRunner5Fixture",
-        "./importRunner3Fixture",
+        "./function1",
+        "./function2",
+        "./function3",
+        "./function1",
+        "./function2",
+        "./function4",
+        "./function5",
+        "./function3",
       ],
       flowPathsUnique: [
-        "./importRunner1Fixture",
-        "./importRunner2Fixture",
-        "./importRunner3Fixture",
-        "./importRunner4Fixture",
-        "./importRunner5Fixture",
+        "./function1",
+        "./function2",
+        "./function3",
+        "./function4",
+        "./function5",
       ],
     })
   })

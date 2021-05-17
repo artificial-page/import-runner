@@ -9,7 +9,7 @@ describe("importRunnerImport", () => {
       await fsExtra.readFile(
         join(
           __dirname,
-          "../../../src/fixtures/sourceProcessorFixture.ts"
+          "../../../src/fixtures/testRunner.ts"
         )
       )
     ).toString()

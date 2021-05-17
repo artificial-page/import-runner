@@ -4,12 +4,12 @@ import fsExtra from "fs-extra"
 import defaultFunction from "./defaultFunction"
 
 describe("defaultFunction", () => {
-  it("parses sourceProcessorFixture", async () => {
+  it("parses testRunner", async () => {
     const data = (
       await fsExtra.readFile(
         join(
           __dirname,
-          "../../../src/fixtures/sourceProcessorFixture.ts"
+          "../../../src/fixtures/testRunner.ts"
         )
       )
     ).toString()
@@ -26,12 +26,12 @@ describe("defaultFunction", () => {
     expect(defaultFunctionOutputType).toBe("any")
   })
 
-  it("parses importRunner1Fixture", async () => {
+  it("parses function1", async () => {
     const data = (
       await fsExtra.readFile(
         join(
           __dirname,
-          "../../../src/fixtures/importRunner1Fixture.ts"
+          "../../../src/fixtures/function1.ts"
         )
       )
     ).toString()
