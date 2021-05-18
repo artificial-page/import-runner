@@ -12,5 +12,5 @@ export default (): string => {
         ],
       })
     }
-  `.replace(/\n\s{4}/g, "\n")
+  `.replace(/\n[ ]{4}/g, "\n")
 }

@@ -32,7 +32,21 @@ describe("sourceProcessor", () => {
       })
     }
 
-    // Process sourceProcessorFixture
+    // Process testRunner
+    await sourceProcessor({
+      fileReplacer,
+      fsExtra,
+      path: "/tmp/testRunner.ts",
+    })
+
+    // Compare with "post" fixtures
+    for (const fixture of fixtures) {
+      expect(await readTmpFixture(fixture)).toBe(
+        await readSrcFixture(`${fixture}Post`)
+      )
+    }
+
+    // Processes testRunner again
     await sourceProcessor({
       fileReplacer,
       fsExtra,
