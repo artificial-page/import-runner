@@ -1,15 +1,15 @@
-import path from "path"
 import { ReplacementOutputType } from "file-replacer"
 import outTypes from "../coders/outTypes"
 import { regex } from "../parsers/defaultFunction"
+import { FlowPath } from "sourceProcessor"
 
 export default ({
-  flowPathsUnique,
+  prevImportPaths,
 }: {
-  flowPathsUnique: string[]
+  prevImportPaths: FlowPath[]
 }): ReplacementOutputType => {
-  const basenames = flowPathsUnique.map((str) =>
-    path.basename(str)
+  const basenames = prevImportPaths.map(
+    ({ importPathBase }) => importPathBase
   )
 
   return [

@@ -1,5 +1,5 @@
-import { OutType } from "io-type"
 import function1 from "./function1"
+import { OutType } from "io-type"
 export * from "./function1"
 
 export default async (

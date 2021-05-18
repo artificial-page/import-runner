@@ -1,8 +1,8 @@
+import function1 from "./function1"
 import { OutType } from "io-type"
 import function2 from "./function2"
 import function4 from "./function4"
 import function5 from "./function5"
-import function1 from "./function1"
 export * from "./function1"
 
 export default async (

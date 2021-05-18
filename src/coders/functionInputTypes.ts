@@ -1,22 +1,20 @@
-import path from "path"
+import { FlowPath } from "sourceProcessor"
 
 export default ({
-  inputTypePaths,
+  prevImportPaths,
   runnerInputType,
 }: {
-  inputTypePaths: [string, string[]][]
+  prevImportPaths: FlowPath[]
   runnerInputType: string
 }): string => {
-  const inputTypes = inputTypePaths
-    .map(([p, t], i) => {
-      const basename = path.basename(p, ".ts")
-
+  const inputTypes = prevImportPaths
+    .map(({ importPathBase, outputTypeIds }, i) => {
       const amp =
-        inputTypePaths.length - 1 === i ? "" : " &"
+        prevImportPaths.length - 1 === i ? "" : " &"
 
-      const keys = t.join(", ")
+      const keys = outputTypeIds.join(", ")
 
-      return /* typescript */ `OutType<typeof ${basename}>${amp} // ${keys}`
+      return /* typescript */ `OutType<typeof ${importPathBase}>${amp} // ${keys}`
     })
     .join("\n    ")
 

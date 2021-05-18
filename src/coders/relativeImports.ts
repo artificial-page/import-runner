@@ -1,21 +1,21 @@
-import path from "path"
+import { FlowPath } from "sourceProcessor"
 import relPath from "../helpers/relPath"
 
 export default ({
   importPath,
-  inputTypePaths,
+  prevImportPaths,
 }: {
   importPath: string
-  inputTypePaths: [string, string[]][]
+  prevImportPaths: FlowPath[]
 }): string[] => {
-  return inputTypePaths.map(([p]) => {
-    const relImportPath = relPath({
-      fromPath: importPath,
-      toPath: p,
-    })
+  return prevImportPaths.map(
+    ({ importPath: p, importPathBase }) => {
+      const relImportPath = relPath({
+        fromPath: importPath,
+        toPath: p,
+      })
 
-    const basename = path.basename(p, ".ts")
-
-    return `import ${basename} from "${relImportPath}"`
-  })
+      return `import ${importPathBase} from "${relImportPath}"`
+    }
+  )
 }
