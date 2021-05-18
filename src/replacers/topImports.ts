@@ -7,11 +7,20 @@ export default ({
 }: {
   imports: string[]
 }): ReplacementOutputType => {
-  return imports.map((str): ReplacementOutputType[0] => {
-    return {
-      replace: (m) => m + str + "\n",
-      search: regex,
-      condition: (body) => !body.includes(str),
-    }
-  })
+  return [
+    ...imports.map((str): ReplacementOutputType[0] => {
+      return {
+        replace: (m) => m + str + "\n",
+        search: regex,
+        condition: (body) => !body.includes(str),
+      }
+    }),
+    ...imports.map((str): ReplacementOutputType[0] => {
+      return {
+        replace: str + "\n",
+        search: /^/,
+        condition: (body) => !body.includes(str),
+      }
+    }),
+  ]
 }
