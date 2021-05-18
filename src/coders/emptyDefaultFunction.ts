@@ -3,5 +3,5 @@ export default (): string => {
     export default async (input: unknown): Promise<any> => {
       return {}
     }
-  `.replace(/\n[ ]{2}/g, "\n")
+  `
 }

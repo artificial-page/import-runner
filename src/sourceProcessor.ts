@@ -41,7 +41,12 @@ export async function sourceProcessor({
 
   if (data.trim() === "") {
     data = emptyRunnerFunction()
-    await fsExtra.writeFile(path, data)
+    await fileReplacer({
+      data,
+      dest: path,
+      eslint,
+      fsExtra,
+    })
   }
 
   const promises = []
@@ -208,8 +213,12 @@ export async function processFlowPath({
   } else {
     importData = emptyDefaultFunction()
 
-    await fsExtra.ensureFile(importPath)
-    await fsExtra.writeFile(importPath, importData)
+    await fileReplacer({
+      data: importData,
+      dest: importPath,
+      eslint,
+      fsExtra,
+    })
   }
 
   const {
