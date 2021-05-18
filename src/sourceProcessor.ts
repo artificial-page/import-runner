@@ -2,7 +2,9 @@ import { basename, dirname, join } from "path"
 import { ESLint } from "eslint"
 import fileReplacerType from "file-replacer"
 import fsExtraType from "fs-extra"
-import importRunnerImport from "./parsers/importRunnerImport"
+import importRunnerImport, {
+  regex as importRunnerImportRegex,
+} from "./parsers/importRunnerImport"
 import importRunnerFlow, {
   FlowType,
 } from "./parsers/importRunnerFlow"
@@ -33,13 +35,12 @@ export async function sourceProcessor({
   path: string
   eslint?: ESLint
 }): Promise<void> {
-  if (!path.match(/Runner\.tsx?$/)) {
-    return
-  }
-
   let data = (await fsExtra.readFile(path)).toString()
 
-  if (data.trim() === "") {
+  if (
+    data.match(importRunnerImportRegex) &&
+    data.replace(importRunnerImportRegex, "").trim() === ""
+  ) {
     data = emptyRunnerFunction()
     await fileReplacer({
       data,
