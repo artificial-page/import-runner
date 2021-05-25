@@ -22,6 +22,8 @@ export interface FlowPath {
   importPath: string
   importPathBase: string
   outputTypeIds: string[]
+  inputTypes: string
+  outputTypes: string
 }
 
 export async function sourceProcessor({
@@ -64,9 +66,6 @@ export async function sourceProcessor({
       return
     }
 
-    const { defaultFunctionInputType: runnerInputType } =
-      defaultFunction({ data })
-
     const prevImportPaths = []
 
     await processFlow({
@@ -78,7 +77,6 @@ export async function sourceProcessor({
       path,
       prevImportPaths,
       promises,
-      runnerInputType,
     })
 
     if (prevImportPaths.length) {
@@ -98,7 +96,7 @@ export async function sourceProcessor({
             ...defaultFunctionReplacer({ prevImportPaths }),
             ...topImports({
               imports: [
-                'import { OutType } from "io-type"',
+                'import { InType, InOutType } from "io-type"',
                 ...imports,
               ],
             }),
@@ -119,7 +117,6 @@ export async function processFlow({
   path,
   prevImportPaths,
   promises,
-  runnerInputType,
   eslint,
 }: {
   flow: FlowType
@@ -129,7 +126,6 @@ export async function processFlow({
   path: string
   prevImportPaths: FlowPath[]
   promises: Promise<any>[]
-  runnerInputType: string
   eslint?: ESLint
 }): Promise<void> {
   for (const flowKey in flow) {
@@ -160,7 +156,6 @@ export async function processFlow({
                 ? lockedPrevPaths
                 : prevImportPaths,
             promises,
-            runnerInputType,
           })
 
           if (prevImportPath) {
@@ -176,7 +171,6 @@ export async function processFlow({
             path,
             prevImportPaths,
             promises,
-            runnerInputType,
           })
         }
       }
@@ -191,7 +185,6 @@ export async function processFlowPath({
   path,
   prevImportPaths,
   promises,
-  runnerInputType,
   eslint,
 }: {
   fileReplacer: typeof fileReplacerType
@@ -200,7 +193,6 @@ export async function processFlowPath({
   path: string
   prevImportPaths: FlowPath[]
   promises: Promise<any>[]
-  runnerInputType: string
   eslint?: ESLint
 }): Promise<FlowPath> {
   const importPath = join(dirname(path), flowPath + ".ts")
@@ -224,6 +216,7 @@ export async function processFlowPath({
 
   const {
     defaultFunctionMatch,
+    defaultFunctionInputType,
     defaultFunctionOutputType,
   } = defaultFunction({
     data: importData,
@@ -244,7 +237,6 @@ export async function processFlowPath({
     if (prevImportPaths.length) {
       inputTypes = functionInputTypes({
         prevImportPaths,
-        runnerInputType,
       })
 
       imports = [
@@ -253,7 +245,7 @@ export async function processFlowPath({
         ...relativeImports({ importPath, prevImportPaths }),
       ]
     } else {
-      inputTypes = `(input: ${runnerInputType})`
+      inputTypes = "(\n  input: Record<string, never>\n)"
     }
 
     promises.push(
@@ -288,6 +280,8 @@ export async function processFlowPath({
         ""
       ),
       outputTypeIds,
+      inputTypes: defaultFunctionInputType,
+      outputTypes: defaultFunctionOutputType,
     }
   }
 }

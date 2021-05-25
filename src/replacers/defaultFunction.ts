@@ -15,11 +15,16 @@ export default ({
   return [
     {
       replace: (m, p1, p2, p3, p4, p5) => {
-        const x = `${p1}${p2}${p3}${p4}${
+        const x = `${p1}${p2}${`(\n  memo: ${
+          outTypes({
+            basenames,
+            type: "In",
+          }) || "Record<string, never> = {}"
+        }\n)`}${p4}${
           p5.match(/^Promise</) ? "Promise<" : ""
-        }\n  ${outTypes({ basenames }) || "any"}\n${
-          p5.match(/^Promise</) ? ">" : ""
-        }`
+        }\n  ${
+          outTypes({ basenames, type: "InOut" }) || "any"
+        }\n${p5.match(/^Promise</) ? ">" : ""}`
         return x
       },
       search: regex,

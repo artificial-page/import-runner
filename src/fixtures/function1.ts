@@ -26,7 +26,7 @@ export function delay(ms: number): Promise<void> {
 }
 
 export default async (
-  input: unknown
+  input: Record<string, never>
 ): Promise<{ id: string; x?: boolean }> => {
   const id = Math.random().toString(36).substr(2, 9)
 

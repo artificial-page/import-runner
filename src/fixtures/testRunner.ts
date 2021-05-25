@@ -1,8 +1,8 @@
 import importRunner from "../importRunner"
 
-export default async (memo: {
-  hi: boolean
-}): Promise<any> => {
+export default async (
+  memo: Record<string, never> = {}
+): Promise<any> => {
   return await importRunner({
     memo,
     all: [

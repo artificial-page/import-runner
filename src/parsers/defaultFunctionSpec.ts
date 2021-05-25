@@ -20,7 +20,7 @@ describe("defaultFunction", () => {
     } = defaultFunction({ data })
 
     expect(defaultFunctionInputType).toBe(
-      "{\n  hi: boolean\n}"
+      "Record<string, never> = {}"
     )
 
     expect(defaultFunctionOutputType).toBe("any")
@@ -41,7 +41,9 @@ describe("defaultFunction", () => {
       defaultFunctionOutputType,
     } = defaultFunction({ data })
 
-    expect(defaultFunctionInputType).toBe("unknown")
+    expect(defaultFunctionInputType).toBe(
+      "Record<string, never>"
+    )
 
     expect(defaultFunctionOutputType).toBe(
       "{ id: string; x?: boolean }"

@@ -1,2 +1,2 @@
 export default (): string =>
-  'import { OutType } from "io-type"'
+  'import { InOutType } from "io-type"'
