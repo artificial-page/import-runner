@@ -14,9 +14,11 @@ export default ({
       const amp =
         prevImportPaths.length - 1 === i ? "" : " &"
 
-      const keys = outputTypeIds.join(", ")
+      const keys = outputTypeIds?.join(", ")
 
-      return /* typescript */ `OutType<typeof ${importPathBase}>${amp} // ${keys}`
+      return /* typescript */ `OutType<typeof ${importPathBase}>${amp}${
+        keys ? ` // ${keys}` : ""
+      }`
     }
   )
 
