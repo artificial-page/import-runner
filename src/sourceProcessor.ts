@@ -254,9 +254,9 @@ export async function processFlowPath({
         !defaultFunctionInputType ||
         defaultFunctionInputType === "Record<string, never>"
           ? ""
-          : ` & ${defaultFunctionInputType}`
+          : `${defaultFunctionInputType} & `
 
-      inputTypes = `(\n  input: InType<typeof ${pathBasename}>${input}\n)`
+      inputTypes = `(\n  input: ${input}InType<typeof ${pathBasename}>\n)`
     }
 
     promises.push(
