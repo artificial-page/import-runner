@@ -59,6 +59,9 @@ export function pathsFromFlow({
 
   for (const key in flow) {
     if (key === "all" || key === "each") {
+      if (!Array.isArray(flow[key])) {
+        continue
+      }
       for (const item of flow[key]) {
         if (typeof item === "string") {
           paths.push(item)
