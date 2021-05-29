@@ -283,17 +283,15 @@ export async function processFlowPath({
     )
   }
 
-  if (outputTypeIds) {
-    return {
-      importPath,
-      importPathBase: basename(importPath).replace(
-        /\.tsx?$/,
-        ""
-      ),
-      outputTypeIds,
-      inputTypes: defaultFunctionInputType,
-      outputTypes: defaultFunctionOutputType,
-    }
+  return {
+    importPath,
+    importPathBase: basename(importPath).replace(
+      /\.tsx?$/,
+      ""
+    ),
+    outputTypeIds,
+    inputTypes: defaultFunctionInputType,
+    outputTypes: defaultFunctionOutputType,
   }
 }
 
