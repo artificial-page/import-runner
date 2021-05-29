@@ -1,6 +1,6 @@
 import { ReplacementOutputType } from "file-replacer"
 
-export const regex = /^\s*(import\s[^\n]+\n)+/g
+export const regex = /^\s*(import\s[^\n]+\n+)+/g
 
 export default ({
   imports,
@@ -22,5 +22,9 @@ export default ({
         condition: (body) => !body.includes(str),
       }
     }),
+    {
+      replace: (m) => m.trim() + "\n\n",
+      search: regex,
+    },
   ]
 }

@@ -1,3 +1,6 @@
+import { InType } from "io-type"
+import testRunner from "./testRunner"
+
 let calls = []
 let delayMs: number
 
@@ -26,7 +29,7 @@ export function delay(ms: number): Promise<void> {
 }
 
 export default async (
-  input: Record<string, never>
+  input: InType<typeof testRunner>
 ): Promise<{ id: string; x?: boolean }> => {
   const id = Math.random().toString(36).substr(2, 9)
 

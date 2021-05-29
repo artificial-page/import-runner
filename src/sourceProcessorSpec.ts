@@ -1,6 +1,7 @@
 import expect from "expect"
+import { ESLint } from "eslint"
 import fileReplacer from "file-replacer"
-import fsExtra from "fs-extra"
+import fsExtra, { ensureDir, remove } from "fs-extra"
 import path from "path"
 import sourceProcessor from "./sourceProcessor"
 import { reset } from "./fixtures/function1"
@@ -14,29 +15,39 @@ export const fixtures = [
   "function5",
 ]
 
+const src = path.join(__dirname, "../../src")
+const tmp = path.join(__dirname, "../../tmp")
+
 describe("sourceProcessor", () => {
   beforeEach(reset)
+
+  beforeEach(async () => {
+    await remove(tmp)
+    await ensureDir(tmp)
+  })
+
+  afterEach(async () => {
+    await remove(tmp)
+  })
 
   it("runs", async () => {
     // Copy fixtures to tmp
     for (const fixture of fixtures) {
-      const tmpPath = `/tmp/${fixture}.ts`
-
       await fileReplacer({
         fsExtra,
-        src: path.join(
-          __dirname,
-          `../../src/fixtures/${fixture}.ts`
-        ),
-        dest: tmpPath,
+        src: path.join(src, `fixtures/${fixture}.ts`),
+        dest: path.join(tmp, `${fixture}.ts`),
       })
     }
 
+    const eslint = new ESLint({ fix: true })
+
     // Process testRunner
     await sourceProcessor({
+      eslint,
       fileReplacer,
       fsExtra,
-      path: "/tmp/testRunner.ts",
+      path: path.join(tmp, "testRunner.ts"),
     })
 
     // Compare with "post" fixtures
@@ -48,9 +59,10 @@ describe("sourceProcessor", () => {
 
     // Processes testRunner again
     await sourceProcessor({
+      eslint,
       fileReplacer,
       fsExtra,
-      path: "/tmp/testRunner.ts",
+      path: path.join(tmp, "testRunner.ts"),
     })
 
     // Compare with "post" fixtures
@@ -59,7 +71,7 @@ describe("sourceProcessor", () => {
         await readSrcFixture(`${fixture}Post`)
       )
     }
-  })
+  }).timeout(10000)
 })
 
 export async function readSrcFixture(
@@ -67,7 +79,7 @@ export async function readSrcFixture(
 ): Promise<string> {
   return (
     await fsExtra.readFile(
-      path.join(__dirname, `../../src/fixtures/${name}.ts`)
+      path.join(src, `fixtures/${name}.ts`)
     )
   ).toString()
 }
@@ -76,6 +88,6 @@ export async function readTmpFixture(
   name: string
 ): Promise<string> {
   return (
-    await fsExtra.readFile(`/tmp/${name}.ts`)
+    await fsExtra.readFile(path.join(tmp, `${name}.ts`))
   ).toString()
 }

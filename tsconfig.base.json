@@ -10,5 +10,6 @@
     "rootDir": "./src",
     "sourceMap": true,
     "types": ["node", "mocha"]
-  }
+  },
+  "include": ["src/**/*"]
 }

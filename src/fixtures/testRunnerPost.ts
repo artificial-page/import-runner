@@ -1,23 +1,37 @@
 import importRunner from "../importRunner"
-import { InType, InOutType } from "io-type"
-import function1 from "./function1"
-import function2 from "./function2"
-import function4 from "./function4"
-import function5 from "./function5"
-import function3 from "./function3"
 
 export default async (
-  memo: InType<typeof function1> &
-    InType<typeof function2> &
-    InType<typeof function4> &
-    InType<typeof function5> &
-    InType<typeof function3>
+  memo: {
+    // function2 input
+    fn2Input: boolean
+  } & {
+    // function4 input
+    fn4Input: boolean
+  }
 ): Promise<
-  InOutType<typeof function1> &
-    InOutType<typeof function2> &
-    InOutType<typeof function4> &
-    InOutType<typeof function5> &
-    InOutType<typeof function3>
+  {
+    // function2 input
+    fn2Input: boolean
+  } & {
+    // function4 input
+    fn4Input: boolean
+  } & {
+    // function1 output
+    id: string
+    x?: boolean
+  } & {
+    // function2 output
+    id: string
+  } & {
+    // function4 output
+    id: string
+  } & {
+    // function5 output
+    id: string
+  } & {
+    // function3 output
+    id: string
+  }
 > => {
   return await importRunner({
     memo,

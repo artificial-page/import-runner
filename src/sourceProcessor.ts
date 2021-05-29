@@ -14,9 +14,9 @@ import typeKeys from "./parsers/typeKeys"
 import emptyDefaultFunction from "./coders/emptyDefaultFunction"
 import functionInputTypes from "./coders/functionInputTypes"
 import relativeImports from "./coders/relativeImports"
-import outTypeImport from "./coders/outTypeImport"
 import emptyRunnerFunction from "./coders/emptyRunnerFunction"
 import topImports from "./replacers/topImports"
+import relPath from "./helpers/relPath"
 
 export interface FlowPath {
   importPath: string
@@ -80,11 +80,6 @@ export async function sourceProcessor({
     })
 
     if (prevImportPaths.length) {
-      const imports = relativeImports({
-        importPath: path,
-        prevImportPaths,
-      })
-
       promises.push(
         fileReplacer({
           fsExtra,
@@ -92,15 +87,9 @@ export async function sourceProcessor({
           dest: path,
           eslint,
           skipUnchanged: true,
-          replacements: [
-            ...defaultFunctionReplacer({ prevImportPaths }),
-            ...topImports({
-              imports: [
-                'import { InType, InOutType } from "io-type"',
-                ...imports,
-              ],
-            }),
-          ],
+          replacements: defaultFunctionReplacer({
+            prevImportPaths,
+          }),
         })
       )
     }
@@ -232,20 +221,42 @@ export async function processFlowPath({
     let imports: string[]
     let inputTypes: string
 
-    imports = []
+    const relImportPath = relPath({
+      fromPath: importPath,
+      toPath: path,
+    })
+
+    const pathBasename = basename(path, ".ts")
+
+    imports = [
+      `import ${pathBasename} from "${relImportPath}"`,
+    ]
 
     if (prevImportPaths.length) {
       inputTypes = functionInputTypes({
+        defaultFunctionInputType,
+        pathBasename,
         prevImportPaths,
       })
 
       imports = [
-        outTypeImport(),
+        ...imports,
+        'import { InType, OutType } from "io-type"',
         ...imports,
         ...relativeImports({ importPath, prevImportPaths }),
       ]
     } else {
-      inputTypes = "(\n  input: Record<string, never>\n)"
+      imports = [
+        ...imports,
+        'import { InType } from "io-type"',
+      ]
+      const input =
+        !defaultFunctionInputType ||
+        defaultFunctionInputType === "Record<string, never>"
+          ? ""
+          : ` & ${defaultFunctionInputType}`
+
+      inputTypes = `(\n  input: InType<typeof ${pathBasename}>${input}\n)`
     }
 
     promises.push(
