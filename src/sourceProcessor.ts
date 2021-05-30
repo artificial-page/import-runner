@@ -242,7 +242,6 @@ export async function processFlowPath({
       imports = [
         ...imports,
         'import { InType, OutType } from "io-type"',
-        ...imports,
         ...relativeImports({ importPath, prevImportPaths }),
       ]
     } else {
