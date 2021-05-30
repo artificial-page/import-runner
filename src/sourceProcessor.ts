@@ -17,6 +17,7 @@ import relativeImports from "./coders/relativeImports"
 import emptyRunnerFunction from "./coders/emptyRunnerFunction"
 import topImports from "./replacers/topImports"
 import relPath from "./helpers/relPath"
+import childPath from "./helpers/childPath"
 
 export interface FlowPath {
   importPath: string
@@ -217,7 +218,9 @@ export async function processFlowPath({
     outputTypeIds = typeKeys({
       types: defaultFunctionOutputType,
     })
+  }
 
+  if (childPath({ fromPath: path, toPath: importPath })) {
     let imports: string[]
     let inputTypes: string
 
