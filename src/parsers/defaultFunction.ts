@@ -15,7 +15,7 @@ export default ({
   if (match) {
     const inputType = match[3]
       .match(/\([^:]+:\s*(.+)(?=(\)))/s)[1]
-      .split(/&?\s*(In|Out|InOut)Type</)[0]
+      .split(/(^|\&)\s*(In|Out|InOut)Type</)[0]
       .trim()
 
     return {
