@@ -32,12 +32,28 @@ export async function sourceProcessor({
   fsExtra,
   path,
   eslint,
+  pathCache,
 }: {
   fileReplacer: typeof fileReplacerType
   fsExtra: typeof fsExtraType
   path: string
   eslint?: ESLint
+  pathCache?: Record<string, string[]>
 }): Promise<void> {
+  if (pathCache && pathCache[path]) {
+    await Promise.all(
+      pathCache[path].map(async (p) => {
+        await sourceProcessor({
+          fileReplacer,
+          fsExtra,
+          path: p,
+          eslint,
+          pathCache,
+        })
+      })
+    )
+  }
+
   let data = (await fsExtra.readFile(path)).toString()
 
   if (
@@ -93,6 +109,17 @@ export async function sourceProcessor({
           }),
         })
       )
+
+      if (pathCache) {
+        for (const { importPath } of prevImportPaths) {
+          pathCache[importPath] =
+            pathCache[importPath] || []
+
+          if (!pathCache[importPath].includes(path)) {
+            pathCache[importPath].push(path)
+          }
+        }
+      }
     }
   }
 
