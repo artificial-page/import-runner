@@ -247,7 +247,10 @@ export async function processFlowPath({
     })
   }
 
-  if (childPath({ fromPath: path, toPath: importPath })) {
+  if (
+    !importData.match(importRunnerImportRegex) &&
+    childPath({ fromPath: path, toPath: importPath })
+  ) {
     let imports: string[]
     let inputTypes: string
 
