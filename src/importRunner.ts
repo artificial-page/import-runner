@@ -56,7 +56,10 @@ export function addMemoToInput({
   input,
 }: {
   memo: any
-  input: ImportRunnerInput | Promise<ImportType>
+  input:
+    | ImportRunnerInput
+    | Promise<ImportType>
+    | ImportType
 }): ImportRunnerInput {
   return input["then"]
     ? {

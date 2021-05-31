@@ -27,7 +27,7 @@ describe("sourceProcessor", () => {
   })
 
   afterEach(async () => {
-    await remove(tmp)
+    // await remove(tmp)
   })
 
   it("runs", async () => {

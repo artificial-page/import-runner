@@ -3,8 +3,16 @@ export interface ImportType {
 }
 
 export interface ImportRunnerInput {
-  all?: (ImportRunnerInput | Promise<ImportType>)[]
-  each?: (ImportRunnerInput | Promise<ImportType>)[]
+  all?: (
+    | ImportRunnerInput
+    | Promise<ImportType>
+    | ImportType
+  )[]
+  each?: (
+    | ImportRunnerInput
+    | Promise<ImportType>
+    | ImportType
+  )[]
   memo?: any
   promise?: Promise<ImportType>
 }
