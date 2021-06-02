@@ -3,3 +3,4 @@
 /.serverless
 /dist
 /node_modules
+/tmp
