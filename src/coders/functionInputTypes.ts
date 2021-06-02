@@ -1,4 +1,4 @@
-import { FlowPath } from "sourceProcessor"
+import { FlowPath } from "../sourceProcessor"
 
 export default ({
   defaultFunctionInputType,

@@ -1,4 +1,4 @@
-import { FlowPath } from "sourceProcessor"
+import { FlowPath } from "../sourceProcessor"
 import relPath from "../helpers/relPath"
 
 export default ({

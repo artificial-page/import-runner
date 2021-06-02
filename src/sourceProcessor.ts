@@ -18,6 +18,7 @@ import emptyRunnerFunction from "./coders/emptyRunnerFunction"
 import topImports from "./replacers/topImports"
 import relPath from "./helpers/relPath"
 import childPath from "./helpers/childPath"
+import readmeReplacer from "./replacers/readme"
 
 export interface FlowPath {
   importPath: string
@@ -33,12 +34,14 @@ export async function sourceProcessor({
   path,
   eslint,
   pathCache,
+  readme,
 }: {
   fileReplacer: typeof fileReplacerType
   fsExtra: typeof fsExtraType
   path: string
   eslint?: ESLint
   pathCache?: Record<string, string[]>
+  readme?: boolean
 }): Promise<void> {
   if (pathCache && pathCache[path]) {
     await Promise.all(
@@ -60,9 +63,8 @@ export async function sourceProcessor({
     data.match(importRunnerImportRegex) &&
     data.replace(importRunnerImportRegex, "").trim() === ""
   ) {
-    data = emptyRunnerFunction()
-    await fileReplacer({
-      data,
+    data = await fileReplacer({
+      data: emptyRunnerFunction(),
       dest: path,
       eslint,
       fsExtra,
@@ -120,6 +122,12 @@ export async function sourceProcessor({
           }
         }
       }
+    }
+
+    if (readme) {
+      promises.push(
+        readmeReplacer({ path, fsExtra, prevImportPaths })
+      )
     }
   }
 

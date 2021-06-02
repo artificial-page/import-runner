@@ -4,7 +4,7 @@ export default (): string => {
 
     export default async (
       memo: Record<string, never> = {}
-    ): Promise<any> => {
+    ): Promise<Record<string, never>> => {
       return await importRunner({
         memo,
         each: [
