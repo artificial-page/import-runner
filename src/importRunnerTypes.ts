@@ -1,5 +1,5 @@
 export interface ImportType {
-  default: (arg: any) => Promise<any>
+  default: (arg: any) => any
 }
 
 export interface ImportRunnerInput {
