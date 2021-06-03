@@ -1,5 +1,5 @@
 export const regex =
-  /(export default )(.+)(\([^)]*\))(:\s+)(.+)(?=(\s+=>\s+\{))/s
+  /(export default )(.*)(\([^)]*\))(:\s+)(.+)(?=(\s+=>\s+\{))/s
 
 export default ({
   data,
