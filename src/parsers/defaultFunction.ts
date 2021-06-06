@@ -20,10 +20,9 @@ export default ({
 
     return {
       defaultFunctionMatch: match,
-      defaultFunctionOutputType: match[5].replace(
-        /^Promise<(.+)>$/,
-        (m, p1) => p1
-      ),
+      defaultFunctionOutputType: match[5]
+        .replace(/^Promise<(.+)>$/s, (m, p1) => p1)
+        .trim(),
       defaultFunctionInputType: inputType,
     }
   }
