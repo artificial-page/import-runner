@@ -32,6 +32,7 @@ export async function sourceProcessor({
   fileReplacer,
   fsExtra,
   path,
+  srcRootPath,
   eslint,
   pathCache,
   readme,
@@ -39,6 +40,7 @@ export async function sourceProcessor({
   fileReplacer: typeof fileReplacerType
   fsExtra: typeof fsExtraType
   path: string
+  srcRootPath: string
   eslint?: ESLint
   pathCache?: Record<string, string[]>
   readme?: boolean
@@ -50,6 +52,7 @@ export async function sourceProcessor({
           fileReplacer,
           fsExtra,
           path: p,
+          srcRootPath,
           eslint,
           pathCache,
         })
@@ -126,7 +129,12 @@ export async function sourceProcessor({
 
     if (readme) {
       promises.push(
-        readmeReplacer({ path, fsExtra, prevImportPaths })
+        readmeReplacer({
+          path,
+          fsExtra,
+          prevImportPaths,
+          srcRootPath,
+        })
       )
     }
   }

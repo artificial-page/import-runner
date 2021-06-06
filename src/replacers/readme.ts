@@ -8,13 +8,14 @@ export default async ({
   path,
   fsExtra,
   prevImportPaths,
+  srcRootPath,
 }: {
   path: string
   fsExtra: typeof fsExtraType
   prevImportPaths: FlowPath[]
+  srcRootPath: string
 }): Promise<void> => {
   const pathBasename = basename(path, ".ts")
-  const pathDirname = dirname(path)
   const readMePath = join(dirname(path), "README.md")
 
   await fileReplacer({
@@ -36,10 +37,12 @@ export default async ({
 <!-- BEGIN AUTO -->
 ## Related files
 
-* [${basename(path)}](${basename(path)})
+* **Runner:** [${relative(srcRootPath, path)}](${basename(
+          path
+        )})
 ${prevImportPaths
   .map(({ importPath }) => {
-    const relPath = relative(pathDirname, importPath)
+    const relPath = relative(srcRootPath, importPath)
     return `* [${relPath}](${relPath})`
   })
   .join("\n")}
@@ -49,7 +52,7 @@ ${prevImportPaths
 ${prevImportPaths
   .filter(({ inputTypes }) => inputTypes)
   .map(({ importPath, inputTypes }) => {
-    const relPath = relative(pathDirname, importPath)
+    const relPath = relative(srcRootPath, importPath)
     return `
 ### [${relPath}](${relPath})
 
@@ -65,7 +68,7 @@ ${decurly(inputTypes)}
 ${prevImportPaths
   .filter(({ outputTypes }) => outputTypes)
   .map(({ importPath, outputTypes }) => {
-    const relPath = relative(pathDirname, importPath)
+    const relPath = relative(srcRootPath, importPath)
     return `
 ### [${relPath}](${relPath})
 

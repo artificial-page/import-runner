@@ -48,6 +48,7 @@ describe("sourceProcessor", () => {
       fileReplacer,
       fsExtra,
       path: path.join(tmp, "testRunner.ts"),
+      srcRootPath: tmp,
     })
 
     // Compare with "post" fixtures
@@ -63,6 +64,7 @@ describe("sourceProcessor", () => {
       fileReplacer,
       fsExtra,
       path: path.join(tmp, "testRunner.ts"),
+      srcRootPath: tmp,
     })
 
     // Compare with "post" fixtures
