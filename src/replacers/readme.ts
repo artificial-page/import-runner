@@ -38,17 +38,20 @@ export default async ({
           /<!-- BEGIN AUTO -->\n(.*)<!-- END AUTO -->/gms,
         replace: `
 <!-- BEGIN AUTO -->
-## Related files
+## Runner
 
 * ${pathLink({
           path,
           pathDirname,
           srcRootPath,
         })}${pathDesc ? ` — ${pathDesc}` : ""}
+
+## Functions
+
 ${prevImportPaths
   .map(
     ({ importPath, description }) =>
-      "  * " +
+      "* " +
       pathLink({
         path: importPath,
         pathDirname,
@@ -58,7 +61,7 @@ ${prevImportPaths
   )
   .join("\n")}
 
-## Control flow
+## Inputs
 
 ${prevImportPaths
   .filter(({ inputTypes }) => inputTypes)
