@@ -44,7 +44,7 @@ export default async ({
           path,
           pathDirname,
           srcRootPath,
-        })}${pathDesc ? ` -- ${pathDesc}` : ""}
+        })}${pathDesc ? ` — ${pathDesc}` : ""}
 ${prevImportPaths
   .map(
     ({ importPath, description }) =>
@@ -54,7 +54,7 @@ ${prevImportPaths
         pathDirname,
         srcRootPath,
       }) +
-      (description ? ` -- ${description}` : "")
+      (description ? ` — ${description}` : "")
   )
   .join("\n")}
 
