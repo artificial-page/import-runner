@@ -21,7 +21,7 @@ describe("defaultFunction", () => {
     } = defaultFunction({ data })
 
     expect(defaultFunctionDescription).toBe(
-      "This is the test runner.\nIt does some stuff."
+      "This is the test runner. It does some stuff."
     )
 
     expect(defaultFunctionInputType).toBe(

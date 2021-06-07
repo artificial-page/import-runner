@@ -1,7 +1,7 @@
+import topComments from "./topComments"
+
 export const regex =
   /(export default )(.*)(\([^)]*\))(:\s+)(.+)(?=(\s+=>\s+\{))/s
-
-export const descRegex = /(\/\/[^\n]+\n)+/g
 
 export default ({
   data,
@@ -14,13 +14,7 @@ export default ({
   defaultFunctionDescription?: string
 } => {
   const match = data.match(regex)
-  const descMatch = data.match(descRegex)
-
-  let desc: string
-
-  if (descMatch) {
-    desc = descMatch[0].replace(/^\/\/\s*/gm, "").trim()
-  }
+  const desc = topComments({ data })
 
   if (match) {
     const inputType = match[3]

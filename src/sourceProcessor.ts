@@ -19,6 +19,7 @@ import topImports from "./replacers/topImports"
 import relPath from "./helpers/relPath"
 import childPath from "./helpers/childPath"
 import readmeReplacer from "./replacers/readme"
+import topComments from "./parsers/topComments"
 
 export interface FlowPath {
   importPath: string
@@ -26,6 +27,7 @@ export interface FlowPath {
   outputTypeIds: string[]
   inputTypes: string
   outputTypes: string
+  description: string
 }
 
 export async function sourceProcessor({
@@ -131,6 +133,7 @@ export async function sourceProcessor({
       promises.push(
         readmeReplacer({
           path,
+          pathDesc: topComments({ data }),
           fsExtra,
           prevImportPaths,
           srcRootPath,
@@ -251,6 +254,7 @@ export async function processFlowPath({
     defaultFunctionMatch,
     defaultFunctionInputType,
     defaultFunctionOutputType,
+    defaultFunctionDescription,
   } = defaultFunction({
     data: importData,
   })
@@ -340,6 +344,7 @@ export async function processFlowPath({
     outputTypeIds,
     inputTypes: defaultFunctionInputType,
     outputTypes: defaultFunctionOutputType,
+    description: defaultFunctionDescription,
   }
 }
 

@@ -6,11 +6,13 @@ import emptyReadme from "../coders/emptyReadme"
 
 export default async ({
   path,
+  pathDesc,
   fsExtra,
   prevImportPaths,
   srcRootPath,
 }: {
   path: string
+  pathDesc: string
   fsExtra: typeof fsExtraType
   prevImportPaths: FlowPath[]
   srcRootPath: string
@@ -38,31 +40,36 @@ export default async ({
 <!-- BEGIN AUTO -->
 ## Related files
 
-* ${pathLink({ path, pathDirname, srcRootPath })}
+* ${pathLink({
+          path,
+          pathDirname,
+          srcRootPath,
+        })}${pathDesc ? ` -- ${pathDesc}` : ""}
 ${prevImportPaths
   .map(
-    ({ importPath }) =>
+    ({ importPath, description }) =>
       "  * " +
       pathLink({
         path: importPath,
         pathDirname,
         srcRootPath,
-      })
+      }) +
+      (description ? ` -- ${description}` : "")
   )
   .join("\n")}
 
-## Inputs
+## Control flow
 
 ${prevImportPaths
   .filter(({ inputTypes }) => inputTypes)
-  .map(({ importPath, inputTypes }) => {
+  .map(({ importPath, inputTypes, description }) => {
     return `
 ### ${pathLink({
       path: importPath,
       pathDirname,
       srcRootPath,
     })}
-
+${description ? `\n${description}\n` : ""}
 \`\`\`typescript
 ${decurly(inputTypes)}
 \`\`\`
@@ -74,14 +81,14 @@ ${decurly(inputTypes)}
 
 ${prevImportPaths
   .filter(({ outputTypes }) => outputTypes)
-  .map(({ importPath, outputTypes }) => {
+  .map(({ importPath, outputTypes, description }) => {
     return `
 ### ${pathLink({
       path: importPath,
       pathDirname,
       srcRootPath,
     })}
-
+${description ? `\n${description}\n` : ""}
 \`\`\`typescript
 ${decurly(outputTypes)}
 \`\`\`

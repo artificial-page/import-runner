@@ -65,6 +65,7 @@ describe("sourceProcessor", () => {
       fsExtra,
       path: path.join(tmp, "testRunner.ts"),
       srcRootPath: tmp,
+      readme: true,
     })
 
     // Compare with "post" fixtures
