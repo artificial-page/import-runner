@@ -1,6 +1,8 @@
 export const regex =
   /(export default )(.*)(\([^)]*\))(:\s+)(.+)(?=(\s+=>\s+\{))/s
 
+export const descRegex = /\/\/[^\n]+\n/g
+
 export default ({
   data,
 }: {
@@ -9,8 +11,18 @@ export default ({
   defaultFunctionMatch?: RegExpMatchArray
   defaultFunctionOutputType?: string
   defaultFunctionInputType?: string
+  defaultFunctionDescription?: string
 } => {
   const match = data.match(regex)
+  const descMatch = data.match(descRegex)
+
+  let desc: string
+
+  if (descMatch) {
+    desc = descMatch
+      .map((str) => str.slice(2).trim())
+      .join("\n")
+  }
 
   if (match) {
     const inputType = match[3]
@@ -24,6 +36,7 @@ export default ({
         .replace(/^Promise<(.+)>$/s, (m, p1) => p1)
         .trim(),
       defaultFunctionInputType: inputType,
+      defaultFunctionDescription: desc,
     }
   }
 

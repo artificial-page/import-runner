@@ -17,7 +17,12 @@ describe("defaultFunction", () => {
     const {
       defaultFunctionInputType,
       defaultFunctionOutputType,
+      defaultFunctionDescription,
     } = defaultFunction({ data })
+
+    expect(defaultFunctionDescription).toBe(
+      "This is the test runner.\nIt does some stuff."
+    )
 
     expect(defaultFunctionInputType).toBe(
       "Record<string, never> = {}"
@@ -39,7 +44,10 @@ describe("defaultFunction", () => {
     const {
       defaultFunctionInputType,
       defaultFunctionOutputType,
+      defaultFunctionDescription,
     } = defaultFunction({ data })
+
+    expect(defaultFunctionDescription).toBeUndefined()
 
     expect(defaultFunctionInputType).toBe(
       "Record<string, never>"
