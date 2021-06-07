@@ -1,7 +1,7 @@
 export const regex =
   /(export default )(.*)(\([^)]*\))(:\s+)(.+)(?=(\s+=>\s+\{))/s
 
-export const descRegex = /\/\/[^\n]+\n/g
+export const descRegex = /(\/\/[^\n]+\n)+/g
 
 export default ({
   data,
@@ -19,9 +19,7 @@ export default ({
   let desc: string
 
   if (descMatch) {
-    desc = descMatch
-      .map((str) => str.slice(2).trim())
-      .join("\n")
+    desc = descMatch[0].replace(/^\/\/\s*/gm, "").trim()
   }
 
   if (match) {
