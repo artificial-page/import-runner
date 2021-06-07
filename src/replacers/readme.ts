@@ -37,13 +37,11 @@ export default async ({
 <!-- BEGIN AUTO -->
 ## Related files
 
-* **Runner:** [${relative(srcRootPath, path)}](${basename(
-          path
-        )})
+* [${relative(srcRootPath, path)}](${basename(path)})
 ${prevImportPaths
   .map(({ importPath }) => {
     const relPath = relative(srcRootPath, importPath)
-    return `* [${relPath}](${relPath})`
+    return `    * [${relPath}](${relPath})`
   })
   .join("\n")}
 
