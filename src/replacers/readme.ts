@@ -42,7 +42,7 @@ export default async ({
 ${prevImportPaths
   .map(
     ({ importPath }) =>
-      "    * " +
+      "  * " +
       pathLink({
         path: importPath,
         pathDirname,

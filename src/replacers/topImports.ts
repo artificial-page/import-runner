@@ -4,31 +4,31 @@ export const regex = /^\s*(import(.+)(?=\n{2}))/gms
 
 export default ({
   imports,
+  data,
 }: {
   imports: string[]
+  data: string
 }): ReplacementOutputType => {
-  return [
-    {
-      search: /^/,
-      replace: "\n",
-    },
-    ...imports.map((str): ReplacementOutputType[0] => {
-      return {
-        replace: (m) => m.trim() + "\n" + str + "\n\n",
-        search: regex,
-        condition: (body) => !body.includes(str),
-      }
-    }),
-    ...imports.map((str): ReplacementOutputType[0] => {
-      return {
-        replace: str + "\n",
+  const blocks = data
+    .split("\n\n")
+    .filter((str) => str.match(/^import/m))
+
+  if (!blocks.length) {
+    return [
+      {
+        replace: imports.join("\n") + "\n\n",
         search: /^/,
-        condition: (body) => !body.includes(str),
-      }
-    }),
-    {
-      replace: (m) => m.trim() + "\n\n",
-      search: regex,
-    },
-  ]
+      },
+    ]
+  }
+
+  const lastBlock = blocks[blocks.length - 1]
+
+  return imports
+    .reverse()
+    .map((str): ReplacementOutputType[0] => ({
+      search: lastBlock,
+      replace: lastBlock + "\n" + str,
+      condition: (body) => !body.includes(str),
+    }))
 }

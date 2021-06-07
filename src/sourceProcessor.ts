@@ -289,14 +289,14 @@ export async function processFlowPath({
       })
 
       imports = [
-        ...imports,
         'import { InType, OutType } from "io-type"',
+        ...imports,
         ...relativeImports({ importPath, prevImportPaths }),
       ]
     } else {
       imports = [
-        ...imports,
         'import { InType } from "io-type"',
+        ...imports,
       ]
       const input =
         !defaultFunctionInputType ||
@@ -325,7 +325,7 @@ export async function processFlowPath({
               defaultFunctionMatch[2] +
               inputTypes,
           },
-          ...topImports({ imports }),
+          ...topImports({ imports, data: importData }),
         ],
       })
     )
