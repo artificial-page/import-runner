@@ -16,6 +16,7 @@ export default async ({
   srcRootPath: string
 }): Promise<void> => {
   const pathBasename = basename(path, ".ts")
+  const pathDirname = dirname(path)
   const readMePath = join(dirname(path), "README.md")
 
   await fileReplacer({
@@ -37,12 +38,17 @@ export default async ({
 <!-- BEGIN AUTO -->
 ## Related files
 
-* [${relative(srcRootPath, path)}](${basename(path)})
+* ${pathLink({ path, pathDirname, srcRootPath })}
 ${prevImportPaths
-  .map(({ importPath }) => {
-    const relPath = relative(srcRootPath, importPath)
-    return `    * [${relPath}](${relPath})`
-  })
+  .map(
+    ({ importPath }) =>
+      "    * " +
+      pathLink({
+        path: importPath,
+        pathDirname,
+        srcRootPath,
+      })
+  )
   .join("\n")}
 
 ## Inputs
@@ -50,9 +56,12 @@ ${prevImportPaths
 ${prevImportPaths
   .filter(({ inputTypes }) => inputTypes)
   .map(({ importPath, inputTypes }) => {
-    const relPath = relative(srcRootPath, importPath)
     return `
-### [${relPath}](${relPath})
+### ${pathLink({
+      path: importPath,
+      pathDirname,
+      srcRootPath,
+    })}
 
 \`\`\`typescript
 ${decurly(inputTypes)}
@@ -66,9 +75,12 @@ ${decurly(inputTypes)}
 ${prevImportPaths
   .filter(({ outputTypes }) => outputTypes)
   .map(({ importPath, outputTypes }) => {
-    const relPath = relative(srcRootPath, importPath)
     return `
-### [${relPath}](${relPath})
+### ${pathLink({
+      path: importPath,
+      pathDirname,
+      srcRootPath,
+    })}
 
 \`\`\`typescript
 ${decurly(outputTypes)}
@@ -87,4 +99,21 @@ export function decurly(str: string): string {
   const match = str.match(/\{\s*(.+)\s*\}/s)
   str = match && match[1] ? match[1].trim() : str.trim()
   return str.replace(/^\s+/gm, "")
+}
+
+export function pathLink({
+  path,
+  pathDirname,
+  srcRootPath,
+}: {
+  path: string
+  pathDirname: string
+  srcRootPath: string
+}): string {
+  const srcRelPath = relative(srcRootPath, path).replace(
+    /\.tsx?$/,
+    ""
+  )
+  const relPath = relative(pathDirname, path)
+  return `[${srcRelPath}](${relPath})`
 }
