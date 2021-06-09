@@ -4,7 +4,6 @@ import { FlowPath } from "../sourceProcessor"
 
 export const excludeTypes = [
   "Record<string, never>",
-  "any",
   "void",
 ]
 
