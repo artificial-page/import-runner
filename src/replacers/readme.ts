@@ -98,7 +98,7 @@ ${decurly(outputTypes)}
   })
   .join("\n")}
 <!-- END AUTO -->
-`.trimStart(),
+`.trim(),
       },
     ],
   })
