@@ -79,7 +79,6 @@ ${decurly(inputTypes)}
 `.trimStart()
   })
   .join("\n")}
-
 ## Outputs
 
 ${prevImportPaths
@@ -99,7 +98,7 @@ ${decurly(outputTypes)}
   })
   .join("\n")}
 <!-- END AUTO -->
-        `.trim(),
+`.trimStart(),
       },
     ],
   })
