@@ -2,6 +2,12 @@ import { ReplacementOutputType } from "file-replacer"
 import { regex } from "../parsers/defaultFunction"
 import { FlowPath } from "../sourceProcessor"
 
+export const excludeTypes = [
+  "Record<string, never>",
+  "any",
+  "void",
+]
+
 export default ({
   prevImportPaths,
 }: {
@@ -9,12 +15,12 @@ export default ({
 }): ReplacementOutputType => {
   const filteredInputs = prevImportPaths.filter(
     ({ inputTypes }) =>
-      inputTypes && inputTypes !== "Record<string, never>"
+      inputTypes && !excludeTypes.includes(inputTypes)
   )
 
   const filteredOutputs = prevImportPaths.filter(
     ({ outputTypes }) =>
-      outputTypes && outputTypes !== "Record<string, never>"
+      outputTypes && !excludeTypes.includes(outputTypes)
   )
 
   const inputs = filteredInputs
