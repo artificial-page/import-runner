@@ -57,6 +57,7 @@ export async function sourceProcessor({
           srcRootPath,
           eslint,
           pathCache,
+          readme,
         })
       })
     )
