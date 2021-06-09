@@ -40,7 +40,7 @@ export default async ({
 <!-- BEGIN AUTO -->
 ## Runner
 
-* ${pathLink({
+- ${pathLink({
           path,
           pathDirname,
           srcRootPath,
@@ -51,7 +51,7 @@ export default async ({
 ${prevImportPaths
   .map(
     ({ importPath, description }) =>
-      "* " +
+      "- " +
       pathLink({
         path: importPath,
         pathDirname,
@@ -76,7 +76,7 @@ ${description ? `\n${description}\n` : ""}
 \`\`\`typescript
 ${decurly(inputTypes)}
 \`\`\`
-`.trim()
+`.trimStart()
   })
   .join("\n")}
 
@@ -95,7 +95,7 @@ ${description ? `\n${description}\n` : ""}
 \`\`\`typescript
 ${decurly(outputTypes)}
 \`\`\`
-`.trim()
+`.trimStart()
   })
   .join("\n")}
 <!-- END AUTO -->
