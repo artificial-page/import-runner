@@ -1,4 +1,4 @@
-export const regex =
+export const importRunnerImportRegex =
   /import ([^\s]+) from "([\.\/]*importRunner|import-runner)"/
 
 export default ({
@@ -9,7 +9,7 @@ export default ({
   importStr?: string
   importVarName?: string
 } => {
-  const match = data.match(regex)
+  const match = data.match(importRunnerImportRegex)
 
   if (match && match[1]) {
     return {

@@ -1,13 +1,14 @@
 import { ImportRunnerInput } from "../importRunnerTypes"
 
 export const bodyRegexStr = "\\({(.+)(?=\\n\\s\\s})"
-export const flowRegex = /\s{4}((all|each):\s\[.+)/s
+export const flowRegex = /\s{4}((all|each|route):\s\[.+)/s
 export const importRegex = /import\((["'][^"']+["'])\)/g
 export const keyRegex = /(\w+):/g
 
 export interface FlowType {
   all?: (FlowType | string)[]
   each?: (FlowType | string)[]
+  route?: (FlowType | string)[]
 }
 
 export default ({

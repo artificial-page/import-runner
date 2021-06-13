@@ -3,7 +3,7 @@ import { ESLint } from "eslint"
 import fileReplacerType from "file-replacer"
 import fsExtraType from "fs-extra"
 import importRunnerImport, {
-  regex as importRunnerImportRegex,
+  importRunnerImportRegex,
 } from "./parsers/importRunnerImport"
 import importRunnerFlow, {
   FlowType,

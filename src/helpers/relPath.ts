@@ -7,8 +7,12 @@ export default ({
   fromPath: string
   toPath: string
 }): string => {
+  fromPath = path.extname(fromPath)
+    ? path.dirname(fromPath)
+    : fromPath
+
   let rel = path
-    .relative(path.dirname(fromPath), toPath)
+    .relative(fromPath, toPath)
     .replace(/\.ts$/, "")
 
   if (!rel.startsWith(".")) {
