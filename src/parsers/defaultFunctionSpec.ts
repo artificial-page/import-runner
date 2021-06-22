@@ -57,4 +57,33 @@ describe("defaultFunction", () => {
       "{ id: string; x?: boolean }"
     )
   })
+
+  it("parses test case", async () => {
+    const data = `
+import { OutType } from "io-type"
+import { InType } from "io-type"
+
+export default (
+  input: InType<typeof ssm> &
+    (OutType<typeof nodeEnv> & OutType<typeof projectYaml>)
+): { ssmClient: SSM } => {
+  return { ssmClient: new SSM() }
+}`
+
+    const {
+      defaultFunctionInputType,
+      defaultFunctionOutputType,
+      defaultFunctionDescription,
+    } = defaultFunction({ data })
+
+    expect(defaultFunctionDescription).toBeUndefined()
+
+    expect(defaultFunctionInputType).toBe(
+      "InType<typeof ssm>"
+    )
+
+    expect(defaultFunctionOutputType).toBe(
+      "{ ssmClient: SSM }"
+    )
+  })
 })

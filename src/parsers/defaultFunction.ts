@@ -1,7 +1,7 @@
 import topComments from "./topComments"
 
 export const regex =
-  /(export default )(.*)(\([^)]*\))(:\s+)(.+)(?=(\s+=>\s+\{))/s
+  /(export default )(async )?(.+)(?=\):)(.+)(?=\s+=>\s+\{)/s
 
 export default ({
   data,
@@ -19,18 +19,21 @@ export default ({
 
   if (match) {
     const inputMatch = match[3].match(
-      /\(([^:]+):\s*(.+)(?=(\)))/s
+      /[\s\(]+([^:]+):\s*(.+)\s*/s
     )
+
     const inputType = inputMatch[2]
-      .split(/(^|\&)\s*(In|Out|InOut)Type</)[0]
+      .split(/\s*\&[\s\(]*(In|Out|InOut)Type</)[0]
       .trim()
+
+    const outputType = match[4].match(
+      /\):\s*(Promise<)?([^>]+)(>)?/
+    )[2]
 
     return {
       defaultFunctionMatch: match,
-      defaultFunctionOutputType: match[5]
-        .replace(/^Promise<(.+)>$/s, (m, p1) => p1)
-        .trim(),
-      defaultFunctionInputName: inputMatch[1]?.trim(),
+      defaultFunctionOutputType: outputType,
+      defaultFunctionInputName: inputMatch[1],
       defaultFunctionInputType: inputType,
       defaultFunctionDescription: desc,
     }

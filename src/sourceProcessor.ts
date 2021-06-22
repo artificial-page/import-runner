@@ -103,11 +103,11 @@ export default async (input: {
       replacements: [
         {
           search: defaultFunctionRegex,
-          replace: (m, p1, p2, p3, p4, p5) => {
-            const x = `${p1}${p2}${`(${functionData.defaultFunctionInputName}: ${flowInputTypes})`}${p4}${
-              p5.match(/^Promise</) ? "Promise<" : ""
+          replace: (m, p1, p2, p3, p4) => {
+            const x = `${p1}${p2}${`(${functionData.defaultFunctionInputName}: ${flowInputTypes}): `}${
+              p4.match(/Promise</) ? "Promise<" : ""
             }${flowOutputTypes}${
-              p5.match(/^Promise</) ? ">" : ""
+              p4.match(/Promise</) ? ">" : ""
             }`
             return x
           },
@@ -206,7 +206,7 @@ export async function processFlow({
 
             const inputTypes = `(input: ${defaultFunctionInputType} & InType<typeof ${pathBasename}>${
               flowInputTypes ? ` & ${flowInputTypes}` : ""
-            })`
+            }`
 
             promises.push(
               fileReplacer({
