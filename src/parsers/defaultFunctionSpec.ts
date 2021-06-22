@@ -78,9 +78,7 @@ export default (
 
     expect(defaultFunctionDescription).toBeUndefined()
 
-    expect(defaultFunctionInputType).toBe(
-      "InType<typeof ssm>"
-    )
+    expect(defaultFunctionInputType).toBeUndefined()
 
     expect(defaultFunctionOutputType).toBe(
       "{ ssmClient: SSM }"

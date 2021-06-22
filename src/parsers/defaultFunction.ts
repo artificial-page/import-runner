@@ -34,7 +34,11 @@ export default ({
       defaultFunctionMatch: match,
       defaultFunctionOutputType: outputType,
       defaultFunctionInputName: inputMatch[1],
-      defaultFunctionInputType: inputType,
+      defaultFunctionInputType: inputType.match(
+        /^(In|Out|InOut)/
+      )
+        ? undefined
+        : inputType,
       defaultFunctionDescription: desc,
     }
   }
