@@ -25,6 +25,7 @@ export default ({
   const lastBlock = blocks[blocks.length - 1]
 
   return imports
+    .slice()
     .reverse()
     .map((str): ReplacementOutputType[0] => ({
       search: lastBlock,

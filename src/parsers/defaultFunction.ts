@@ -10,6 +10,7 @@ export default ({
 }): {
   defaultFunctionMatch?: RegExpMatchArray
   defaultFunctionOutputType?: string
+  defaultFunctionInputName?: string
   defaultFunctionInputType?: string
   defaultFunctionDescription?: string
 } => {
@@ -17,8 +18,10 @@ export default ({
   const desc = topComments({ data })
 
   if (match) {
-    const inputType = match[3]
-      .match(/\([^:]+:\s*(.+)(?=(\)))/s)[1]
+    const inputMatch = match[3].match(
+      /\(([^:]+):\s*(.+)(?=(\)))/s
+    )
+    const inputType = inputMatch[2]
       .split(/(^|\&)\s*(In|Out|InOut)Type</)[0]
       .trim()
 
@@ -27,6 +30,7 @@ export default ({
       defaultFunctionOutputType: match[5]
         .replace(/^Promise<(.+)>$/s, (m, p1) => p1)
         .trim(),
+      defaultFunctionInputName: inputMatch[1]?.trim(),
       defaultFunctionInputType: inputType,
       defaultFunctionDescription: desc,
     }

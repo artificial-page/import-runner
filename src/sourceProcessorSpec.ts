@@ -1,10 +1,9 @@
 import expect from "expect"
 import { ESLint } from "eslint"
 import fileReplacer from "file-replacer"
-import fsExtra, { ensureDir, remove } from "fs-extra"
+import fsExtra from "fs-extra"
 import path from "path"
-import sourceProcessor from "./sourceProcessor"
-import { reset } from "./fixtures/function1"
+import sourceProcessor2 from "./sourceProcessor"
 
 export const fixtures = [
   "testRunner",
@@ -18,18 +17,7 @@ export const fixtures = [
 const src = path.join(__dirname, "../../src")
 const tmp = path.join(__dirname, "../../tmp")
 
-describe("sourceProcessor", () => {
-  beforeEach(reset)
-
-  beforeEach(async () => {
-    await remove(tmp)
-    await ensureDir(tmp)
-  })
-
-  afterEach(async () => {
-    // await remove(tmp)
-  })
-
+describe("sourceProcessor2", () => {
   it("runs", async () => {
     // Copy fixtures to tmp
     for (const fixture of fixtures) {
@@ -42,30 +30,12 @@ describe("sourceProcessor", () => {
 
     const eslint = new ESLint({ fix: true })
 
-    // Process testRunner
-    await sourceProcessor({
+    await sourceProcessor2({
       eslint,
       fileReplacer,
       fsExtra,
       path: path.join(tmp, "testRunner.ts"),
       srcRootPath: tmp,
-    })
-
-    // Compare with "post" fixtures
-    for (const fixture of fixtures) {
-      expect(await readTmpFixture(fixture)).toBe(
-        await readSrcFixture(`${fixture}Post`)
-      )
-    }
-
-    // Processes testRunner again
-    await sourceProcessor({
-      eslint,
-      fileReplacer,
-      fsExtra,
-      path: path.join(tmp, "testRunner.ts"),
-      srcRootPath: tmp,
-      readme: true,
     })
 
     // Compare with "post" fixtures
