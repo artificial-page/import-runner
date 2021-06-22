@@ -298,19 +298,38 @@ export function flowDataTypes({
             ""
           )
 
-          tmpOutput.push(
-            style === "RawInType"
-              ? data.functionData.defaultFunctionInputType
-              : style === "RawOutType"
-              ? data.functionData.defaultFunctionOutputType
-              : style === "RawInOutType"
-              ? `(${data.functionData.defaultFunctionInputType} & ${data.functionData.defaultFunctionOutputType})`
-              : style === "InType"
-              ? `InType<typeof ${base}>`
-              : style === "OutType"
-              ? `OutType<typeof ${base}>`
-              : undefined
-          )
+          const {
+            defaultFunctionInputType,
+            defaultFunctionOutputType,
+          } = data.functionData
+
+          let typeStr: string
+
+          if (
+            style === "RawInType" &&
+            defaultFunctionInputType
+          ) {
+            typeStr = defaultFunctionInputType
+          } else if (
+            style === "RawOutType" &&
+            defaultFunctionOutputType
+          ) {
+            typeStr = defaultFunctionOutputType
+          } else if (
+            style === "RawInOutType" &&
+            defaultFunctionInputType &&
+            defaultFunctionOutputType
+          ) {
+            typeStr = `(${defaultFunctionInputType} & ${defaultFunctionOutputType})`
+          } else if (style === "InType" && base) {
+            typeStr = `InType<typeof ${base}>`
+          } else if (style === "OutType" && base) {
+            typeStr = `OutType<typeof ${base}>`
+          }
+
+          if (typeStr) {
+            tmpOutput.push(typeStr)
+          }
         } else {
           const types = flowDataTypes({
             flowData: data,
