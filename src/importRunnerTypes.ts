@@ -13,6 +13,11 @@ export interface ImportRunnerInput {
     | Promise<ImportType>
     | ImportType
   )[]
+  route?: (
+    | ImportRunnerInput
+    | Promise<ImportType>
+    | ImportType
+  )[]
   memo?: any
   promise?: Promise<ImportType>
 }
