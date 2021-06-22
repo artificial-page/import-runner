@@ -17,7 +17,7 @@ export const fixtures = [
 const src = path.join(__dirname, "../../src")
 const tmp = path.join(__dirname, "../../tmp")
 
-describe("sourceProcessor2", () => {
+describe("sourceProcessor", () => {
   it("runs", async () => {
     // Copy fixtures to tmp
     for (const fixture of fixtures) {
