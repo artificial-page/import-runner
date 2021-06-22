@@ -17,7 +17,7 @@ export default async (
           import("./function1"),
           import("./function2"),
           {
-            all: [
+            route: [
               import("./function4"),
               import("./function5"),
             ],

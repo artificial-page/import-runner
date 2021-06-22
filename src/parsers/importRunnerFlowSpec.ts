@@ -30,7 +30,7 @@ describe("importRunnerFlow", () => {
               "./function1",
               "./function2",
               {
-                all: ["./function4", "./function5"],
+                route: ["./function4", "./function5"],
               },
               "./function3",
             ],

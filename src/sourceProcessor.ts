@@ -261,7 +261,7 @@ export async function processFlow({
         }
       }
 
-      if (key === "all") {
+      if (key === "all" || key === "route") {
         for (const obj of tmpData) {
           flowSubData[key].push(obj)
         }

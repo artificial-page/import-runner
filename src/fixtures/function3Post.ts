@@ -12,8 +12,10 @@ export default async (
     InType<typeof testRunner> &
     (OutType<typeof function1> &
       OutType<typeof function2> &
-      (OutType<typeof function4> &
-        OutType<typeof function5>))
+      (
+        | OutType<typeof function4>
+        | OutType<typeof function5>
+      ))
 ): Promise<{ id: string }> => {
   return await function1({})
 }
