@@ -1,4 +1,5 @@
 import { ImportRunnerInput } from "../importRunnerTypes"
+import { instructions } from "../sourceProcessor"
 
 export const bodyRegexStr = "\\({(.+)(?=\\n\\s\\s})"
 export const flowRegex = /\s{4}((all|each|route):\s\[.+)/s
@@ -59,7 +60,7 @@ export function pathsFromFlow({
   paths = paths || []
 
   for (const key in flow) {
-    if (key === "all" || key === "each") {
+    if (instructions.includes(key)) {
       if (!Array.isArray(flow[key])) {
         continue
       }
