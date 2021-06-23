@@ -1,3 +1,5 @@
+// Example docs.
+
 import function1 from "./function1"
 export * from "./function1"
 

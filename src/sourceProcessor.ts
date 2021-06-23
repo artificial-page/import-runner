@@ -12,6 +12,7 @@ import importRunnerImport from "./parsers/importRunnerImport"
 import { OutType } from "io-type"
 import topImports from "./replacers/topImports"
 import childPath from "./helpers/childPath"
+import readme from "./replacers/readme"
 
 export const instructions = ["all", "each", "route"]
 
@@ -113,6 +114,18 @@ export default async (input: {
           },
         },
       ],
+    })
+  )
+
+  promises.push(
+    readme({
+      fileReplacer,
+      flowData,
+      fsExtra,
+      path,
+      pathDescription:
+        functionData.defaultFunctionDescription,
+      srcRootPath,
     })
   )
 

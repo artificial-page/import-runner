@@ -6,7 +6,10 @@ export default ({
   return /* markdown */ `
 # ${pathBasename}
 
-<!-- BEGIN AUTO -->
-<!-- END AUTO -->
+<!-- BEGIN DESC -->
+<!-- END DESC -->
+
+<!-- BEGIN BODY -->
+<!-- END BODY -->
   `.trim()
 }

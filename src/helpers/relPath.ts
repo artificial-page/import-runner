@@ -13,7 +13,7 @@ export default ({
 
   let rel = path
     .relative(fromPath, toPath)
-    .replace(/\.ts$/, "")
+    .replace(/\.tsx?/, "")
 
   if (!rel.startsWith(".")) {
     rel = "./" + rel
