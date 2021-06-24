@@ -129,18 +129,28 @@ export function processFlow({
 
           content += `
 ## ${breadcrumbs} > ${link}
-
+${
+  inputType
+    ? `
 ### Input
 
 \`\`\`ts
 ${inputType}
 \`\`\`
-
+`
+    : ""
+}
+${
+  outputType
+    ? `
 ### Output
 
 \`\`\`ts
 ${outputType}
 \`\`\`
+`
+    : ""
+}
 `
         } else {
           const { toc: t, content: c } = processFlow({
