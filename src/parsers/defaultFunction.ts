@@ -33,7 +33,7 @@ export default ({
     return {
       defaultFunctionMatch: match,
       defaultFunctionOutputType: outputType
-        ? lineReturnTrim(outputType)
+        ? lineReturnTrim(outputType, true)
         : outputType,
       defaultFunctionInputName: inputMatch[1],
       defaultFunctionInputType: inputType?.match(
@@ -50,6 +50,15 @@ export default ({
   return {}
 }
 
-export function lineReturnTrim(str: string): string {
-  return str.replace(/^\n*/, "").replace(/\n*$/, "")
+export function lineReturnTrim(
+  str: string,
+  addSpace?: boolean
+): string {
+  str = str.replace(/^\n*/, "").replace(/\n*$/, "")
+
+  if (addSpace && str.includes("\n")) {
+    return `  ${str}`
+  }
+
+  return str
 }
