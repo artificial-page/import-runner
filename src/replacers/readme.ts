@@ -117,14 +117,20 @@ export function processFlow({
           const srcPath = relative(srcRootPath, importPath)
           const relSrcPath = join(relPath, srcPath)
           const simplePath = srcPath.replace(/\.tsx?$/, "")
-          const link = `[${simplePath}](${relSrcPath})`
+          const tocAnchor = `${breadcrumbs} > ${simplePath}`
+            .toLowerCase()
+            .replace(/\s/g, "-")
+            .replace(/[^a-z\-]/g, "")
+          const tocLink = `[${simplePath}](#${tocAnchor})`
+          const contentLink = `[${simplePath}](${relSrcPath})`
 
-          toc += `${indent}* ${link}${
+          toc += `${indent}* ${tocLink}${
             desc ? ` — ${desc}` : ""
           }\n`
 
           content += `
-## ${breadcrumbs} > ${link}
+## ${breadcrumbs} > ${contentLink}
+${desc ? `\n${desc}\n` : ""}
 ${
   inputType
     ? `### Input
