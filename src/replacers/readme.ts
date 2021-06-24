@@ -82,6 +82,8 @@ export function processFlow({
   indent: string
   srcRootPath: string
 }): { toc: string; content: string } {
+  const pathDirname = dirname(path)
+
   let toc = ""
   let content = ""
 
@@ -111,9 +113,11 @@ export function processFlow({
             defaultFunctionOutputType: outputType,
           } = functionData
 
-          const relSrcPath = relative(
-            srcRootPath,
-            importPath
+          const relPath = relative(pathDirname, srcRootPath)
+
+          const relSrcPath = join(
+            relPath,
+            relative(srcRootPath, importPath)
           )
 
           const relSrcPathNoExt = relSrcPath.replace(
@@ -131,8 +135,7 @@ export function processFlow({
 ## ${breadcrumbs} > ${link}
 ${
   inputType
-    ? `
-### Input
+    ? `### Input
 
 \`\`\`ts
 ${inputType}
@@ -142,16 +145,14 @@ ${inputType}
 }
 ${
   outputType
-    ? `
-### Output
+    ? `### Output
 
 \`\`\`ts
 ${outputType}
 \`\`\`
 `
     : ""
-}
-`
+}`
         } else {
           const { toc: t, content: c } = processFlow({
             fileReplacer,
