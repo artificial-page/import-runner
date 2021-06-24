@@ -25,10 +25,11 @@ export default async ({
   const pathBasename = basename(path, ".ts")
   const readMePath = join(dirname(path), "README.md")
 
-  const body = processFlow({
+  const { toc, content } = processFlow({
     fileReplacer,
     flowData,
     fsExtra,
+    breadcrumbs: "",
     indent: "",
     path,
     srcRootPath,
@@ -56,7 +57,9 @@ export default async ({
       {
         search:
           /<!-- BEGIN BODY -->\n(.*)<!-- END BODY -->/gms,
-        replace: `<!-- BEGIN BODY -->\n${body}\n<!-- END BODY -->`,
+        replace: `<!-- BEGIN BODY -->\n${
+          toc + content
+        }\n<!-- END BODY -->`,
       },
     ],
   })
@@ -67,6 +70,7 @@ export function processFlow({
   fileReplacer,
   flowData,
   fsExtra,
+  breadcrumbs,
   indent,
   srcRootPath,
 }: {
@@ -74,11 +78,12 @@ export function processFlow({
   fileReplacer: typeof fileReplacerType
   flowData: FlowDataType
   fsExtra: typeof fsExtraType
+  breadcrumbs: string
   indent: string
   srcRootPath: string
-}): string {
-  const pathDirname = dirname(path)
-  let str = ""
+}): { toc: string; content: string } {
+  let toc = ""
+  let content = ""
 
   for (const key in flowData) {
     if (
@@ -87,37 +92,74 @@ export function processFlow({
     ) {
       const flows = flowData[key]
 
-      str += `${indent}* ${key}\n`
+      toc += `${indent}* ${key}\n`
+
       indent += "  "
+
+      breadcrumbs += `${
+        breadcrumbs.length > 0 ? " > " : ""
+      }${key}`
 
       for (const flow of flows) {
         const { importPath } = flow
 
         if (importPath) {
           const { functionData } = flow
-          const { defaultFunctionDescription: desc } =
-            functionData
+          const {
+            defaultFunctionDescription: desc,
+            defaultFunctionInputType: inputType,
+            defaultFunctionOutputType: outputType,
+          } = functionData
 
-          str += `${indent}* ${pathLink({
-            path: importPath,
-            pathDirname,
+          const relSrcPath = relative(
             srcRootPath,
-          })}${desc ? ` — ${desc}` : ""}\n`
+            importPath
+          )
+
+          const relSrcPathNoExt = relSrcPath.replace(
+            /\.tsx?$/,
+            ""
+          )
+
+          const link = `[${relSrcPathNoExt}](${relSrcPath})`
+
+          toc += `${indent}* ${link}${
+            desc ? ` — ${desc}` : ""
+          }\n`
+
+          content += `
+## ${breadcrumbs} > ${link}
+
+### Input
+
+\`\`\`ts
+${inputType}
+\`\`\`
+
+### Output
+
+\`\`\`ts
+${outputType}
+\`\`\`
+`
         } else {
-          str += processFlow({
+          const { toc: t, content: c } = processFlow({
             fileReplacer,
             flowData: flow,
             fsExtra,
+            breadcrumbs,
             indent,
             path,
             srcRootPath,
           })
+          toc += t
+          content += c
         }
       }
     }
   }
 
-  return str
+  return { toc, content }
 }
 
 export function pathLink({
