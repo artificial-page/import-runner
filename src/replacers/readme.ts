@@ -114,18 +114,10 @@ export function processFlow({
           } = functionData
 
           const relPath = relative(pathDirname, srcRootPath)
-
-          const relSrcPath = join(
-            relPath,
-            relative(srcRootPath, importPath)
-          )
-
-          const relSrcPathNoExt = relSrcPath.replace(
-            /\.tsx?$/,
-            ""
-          )
-
-          const link = `[${relSrcPathNoExt}](${relSrcPath})`
+          const srcPath = relative(srcRootPath, importPath)
+          const relSrcPath = join(relPath, srcPath)
+          const simplePath = srcPath.replace(/\.tsx?$/, "")
+          const link = `[${simplePath}](${relSrcPath})`
 
           toc += `${indent}* ${link}${
             desc ? ` — ${desc}` : ""
