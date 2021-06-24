@@ -32,17 +32,13 @@ export default ({
 
     return {
       defaultFunctionMatch: match,
-      defaultFunctionOutputType: outputType
-        ? lineReturnTrim(outputType)
-        : outputType,
+      defaultFunctionOutputType: trimTypeOutput(outputType),
       defaultFunctionInputName: inputMatch[1],
       defaultFunctionInputType: inputType?.match(
         /^(In|Out|InOut)/
       )
         ? undefined
-        : inputType
-        ? lineReturnTrim(inputType, true)
-        : inputType,
+        : trimTypeOutput(inputType),
       defaultFunctionDescription: desc,
     }
   }
@@ -50,13 +46,14 @@ export default ({
   return {}
 }
 
-export function lineReturnTrim(
-  str: string,
-  addSpace?: boolean
-): string {
-  str = str.replace(/^\n*/, "").replace(/\n*$/, "")
+export function trimTypeOutput(str: string): string {
+  if (!str) {
+    return
+  }
 
-  if (addSpace && str.includes("\n")) {
+  str = str.trim()
+
+  if (str.includes("\n") && str.includes("\n    ")) {
     return `  ${str}`
   }
 
