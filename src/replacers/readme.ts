@@ -151,27 +151,27 @@ export function processFlow({
 
           content += `
 ### ${breadcrumbs} > ${contentLink}
-${desc ? `\n${desc}\n` : ""}
-${
-  inputType
-    ? `#### Input
+${desc ? `\n${desc}\n` : ""}${
+            inputType
+              ? `
+#### Input
 
 \`\`\`ts
 ${inputType}
 \`\`\`
 `
-    : ""
-}
-${
-  outputType
-    ? `#### Output
+              : ""
+          }${
+            outputType
+              ? `
+#### Output
 
 \`\`\`ts
 ${outputType}
 \`\`\`
 `
-    : ""
-}`
+              : ""
+          }`
         } else {
           const { toc: t, content: c } = processFlow({
             fileReplacer,
