@@ -75,12 +75,12 @@ export default async ({
       {
         search:
           /<!-- BEGIN TOC -->\n(.*)<!-- END TOC -->/gms,
-        replace: `<!-- BEGIN TOC -->\n${toc}\n<!-- END TOC -->`,
+        replace: `<!-- BEGIN TOC -->\n${toc.trim()}\n<!-- END TOC -->`,
       },
       {
         search:
           /<!-- BEGIN BODY -->\n(.*)<!-- END BODY -->/gms,
-        replace: `<!-- BEGIN BODY -->\n${content}\n<!-- END BODY -->`,
+        replace: `<!-- BEGIN BODY -->\n${content.trim()}\n<!-- END BODY -->`,
       },
     ],
   })
