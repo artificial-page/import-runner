@@ -22,9 +22,9 @@ export default ({
       /[\s\(]+([^:]+):\s*(.+)\s*/s
     )
 
-    const inputType = inputMatch[2]
-      .split(/\s*\&[\s\(]*(In|Out|InOut)Type</)[0]
-      .trim()
+    const inputType = inputMatch[2].split(
+      /\s*\&[\s\(]*(In|Out|InOut)Type</
+    )[0]
 
     const outputType = match[4]
       .match(/\):\s*(Promise<)?(.+)$/s)[2]
@@ -32,16 +32,24 @@ export default ({
 
     return {
       defaultFunctionMatch: match,
-      defaultFunctionOutputType: outputType,
+      defaultFunctionOutputType: outputType
+        ? lineReturnTrim(outputType)
+        : outputType,
       defaultFunctionInputName: inputMatch[1],
-      defaultFunctionInputType: inputType.match(
+      defaultFunctionInputType: inputType?.match(
         /^(In|Out|InOut)/
       )
         ? undefined
+        : inputType
+        ? lineReturnTrim(inputType)
         : inputType,
       defaultFunctionDescription: desc,
     }
   }
 
   return {}
+}
+
+export function lineReturnTrim(str: string): string {
+  return str.replace(/^\n*/, "").replace(/\n*$/, "")
 }
