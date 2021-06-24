@@ -26,9 +26,9 @@ export default ({
       .split(/\s*\&[\s\(]*(In|Out|InOut)Type</)[0]
       .trim()
 
-    const outputType = match[4].match(
-      /\):\s*(Promise<)?([^>]+)(>)?/
-    )[2]
+    const outputType = match[4]
+      .match(/\):\s*(Promise<)?(.+)$/s)[2]
+      ?.replace(/>$/, "")
 
     return {
       defaultFunctionMatch: match,

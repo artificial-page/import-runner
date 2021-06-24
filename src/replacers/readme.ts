@@ -10,6 +10,8 @@ import emptyReadme from "../coders/emptyReadme"
 export default async ({
   path,
   pathDescription,
+  pathInput,
+  pathOutput,
   fileReplacer,
   flowData,
   fsExtra,
@@ -17,6 +19,8 @@ export default async ({
 }: {
   path: string
   pathDescription: string
+  pathInput: string
+  pathOutput: string
   fileReplacer: typeof fileReplacerType
   flowData: FlowDataType
   fsExtra: typeof fsExtraType
@@ -56,10 +60,27 @@ export default async ({
       },
       {
         search:
+          /<!-- BEGIN INPUT -->\n(.*)<!-- END INPUT -->/gms,
+        replace: `<!-- BEGIN INPUT -->\n\`\`\`ts\n${
+          pathInput || ""
+        }\n\`\`\`\n<!-- END INPUT -->`,
+      },
+      {
+        search:
+          /<!-- BEGIN OUTPUT -->\n(.*)<!-- END OUTPUT -->/gms,
+        replace: `<!-- BEGIN OUTPUT -->\n\`\`\`ts\n${
+          pathOutput || ""
+        }\n\`\`\`\n<!-- END OUTPUT -->`,
+      },
+      {
+        search:
+          /<!-- BEGIN TOC -->\n(.*)<!-- END TOC -->/gms,
+        replace: `<!-- BEGIN TOC -->\n${toc}\n<!-- END TOC -->`,
+      },
+      {
+        search:
           /<!-- BEGIN BODY -->\n(.*)<!-- END BODY -->/gms,
-        replace: `<!-- BEGIN BODY -->\n${
-          toc + content
-        }\n<!-- END BODY -->`,
+        replace: `<!-- BEGIN BODY -->\n${content}\n<!-- END BODY -->`,
       },
     ],
   })
@@ -129,11 +150,11 @@ export function processFlow({
           }\n`
 
           content += `
-## ${breadcrumbs} > ${contentLink}
+### ${breadcrumbs} > ${contentLink}
 ${desc ? `\n${desc}\n` : ""}
 ${
   inputType
-    ? `### Input
+    ? `#### Input
 
 \`\`\`ts
 ${inputType}
@@ -143,7 +164,7 @@ ${inputType}
 }
 ${
   outputType
-    ? `### Output
+    ? `#### Output
 
 \`\`\`ts
 ${outputType}

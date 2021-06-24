@@ -117,19 +117,25 @@ export default async (input: {
     })
   )
 
-  promises.push(
-    readme({
-      fileReplacer,
-      flowData,
-      fsExtra,
-      path,
-      pathDescription:
-        functionData.defaultFunctionDescription,
-      srcRootPath,
-    })
-  )
-
   await Promise.all(promises)
+
+  data = (await fsExtra.readFile(path)).toString()
+  const {
+    defaultFunctionInputType,
+    defaultFunctionOutputType,
+  } = defaultFunction({ data })
+
+  await readme({
+    fileReplacer,
+    flowData,
+    fsExtra,
+    path,
+    pathDescription:
+      functionData.defaultFunctionDescription,
+    pathInput: defaultFunctionInputType,
+    pathOutput: defaultFunctionOutputType,
+    srcRootPath,
+  })
 }
 
 export async function processFlow({
