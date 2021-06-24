@@ -54,33 +54,33 @@ export default async ({
       {
         search:
           /<!-- BEGIN DESC -->\n(.*)<!-- END DESC -->/gms,
-        replace: `<!-- BEGIN DESC -->\n${
+        replace: `<!-- BEGIN DESC -->\n\n${
           pathDescription || ""
-        }\n<!-- END DESC -->`,
+        }\n\n<!-- END DESC -->`,
       },
       {
         search:
           /<!-- BEGIN INPUT -->\n(.*)<!-- END INPUT -->/gms,
-        replace: `<!-- BEGIN INPUT -->\n\`\`\`ts\n${
+        replace: `<!-- BEGIN INPUT -->\n\n\`\`\`ts\n${
           pathInput || ""
-        }\n\`\`\`\n<!-- END INPUT -->`,
+        }\n\`\`\`\n\n<!-- END INPUT -->`,
       },
       {
         search:
           /<!-- BEGIN OUTPUT -->\n(.*)<!-- END OUTPUT -->/gms,
-        replace: `<!-- BEGIN OUTPUT -->\n\`\`\`ts\n${
+        replace: `<!-- BEGIN OUTPUT -->\n\n\`\`\`ts\n${
           pathOutput || ""
-        }\n\`\`\`\n<!-- END OUTPUT -->`,
+        }\n\`\`\`\n\n<!-- END OUTPUT -->`,
       },
       {
         search:
           /<!-- BEGIN TOC -->\n(.*)<!-- END TOC -->/gms,
-        replace: `<!-- BEGIN TOC -->\n${toc.trim()}\n<!-- END TOC -->`,
+        replace: `<!-- BEGIN TOC -->\n\n${toc.trim()}\n\n<!-- END TOC -->`,
       },
       {
         search:
           /<!-- BEGIN BODY -->\n(.*)<!-- END BODY -->/gms,
-        replace: `<!-- BEGIN BODY -->\n${content.trim()}\n<!-- END BODY -->`,
+        replace: `<!-- BEGIN BODY -->\n\n${content.trim()}\n\n<!-- END BODY -->`,
       },
     ],
   })
