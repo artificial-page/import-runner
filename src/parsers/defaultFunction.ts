@@ -33,7 +33,7 @@ export default ({
     return {
       defaultFunctionMatch: match,
       defaultFunctionOutputType: outputType
-        ? lineReturnTrim(outputType, true)
+        ? lineReturnTrim(outputType)
         : outputType,
       defaultFunctionInputName: inputMatch[1],
       defaultFunctionInputType: inputType?.match(
@@ -41,7 +41,7 @@ export default ({
       )
         ? undefined
         : inputType
-        ? lineReturnTrim(inputType)
+        ? lineReturnTrim(inputType, true)
         : inputType,
       defaultFunctionDescription: desc,
     }
