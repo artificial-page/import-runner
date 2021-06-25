@@ -1,6 +1,6 @@
 {
   "name": "import-runner",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Low code control flow with dynamically imported functions",
   "main": "./dist/cjs/importRunner.js",
   "scripts": {
