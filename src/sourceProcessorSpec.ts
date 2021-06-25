@@ -4,7 +4,7 @@ import fileReplacer from "file-replacer"
 import fsExtra from "fs-extra"
 import prettier from "prettier"
 import path from "path"
-import sourceProcessor2 from "./sourceProcessor"
+import sourceProcessor from "./sourceProcessor"
 
 export const fixtures = [
   "testRunner",
@@ -31,7 +31,7 @@ describe("sourceProcessor", () => {
 
     const eslint = new ESLint({ fix: true })
 
-    await sourceProcessor2({
+    await sourceProcessor({
       eslint,
       fileReplacer,
       fsExtra,

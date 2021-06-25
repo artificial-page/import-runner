@@ -28,16 +28,16 @@ export interface FlowDataType {
   route?: (FlowDataType | FlowDataChildType)[]
 }
 
-export default async (input: {
+export default async function sourceProcessor(input: {
   eslint: ESLint
   fileReplacer: typeof fileReplacerType
   fsExtra: typeof fsExtraType
   prettier: typeof prettierType
   path: string
   srcRootPath: string
-  pathCache?: Record<string, string[]>
+  pathCache?: Record<string, string>
   readme?: boolean
-}): Promise<void> => {
+}): Promise<void> {
   const {
     fileReplacer,
     fsExtra,
@@ -45,7 +45,15 @@ export default async (input: {
     path,
     eslint,
     srcRootPath,
+    pathCache,
   } = input
+
+  if (pathCache && pathCache[path]) {
+    return await sourceProcessor({
+      ...input,
+      path: pathCache[path],
+    })
+  }
 
   let data = (await fsExtra.readFile(path)).toString()
 
@@ -68,7 +76,16 @@ export default async (input: {
     })
   }
 
-  const { flow } = importRunnerFlow({ data, importVarName })
+  const { flow, flowPathsUnique } = importRunnerFlow({
+    data,
+    importVarName,
+  })
+
+  if (pathCache) {
+    for (const flowPath of flowPathsUnique) {
+      pathCache[flowPath] = path
+    }
+  }
 
   const flowData = {}
   const promises = []
