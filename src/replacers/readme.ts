@@ -54,7 +54,7 @@ export default async ({
       {
         search:
           /<!-- BEGIN NAME -->\n(.*)<!-- END NAME -->/gms,
-        replace: `<!-- BEGIN NAME -->\n\n${pathBasename}\n\n<!-- END NAME -->`,
+        replace: `<!-- BEGIN NAME -->\n\n# ${pathBasename}\n\n<!-- END NAME -->`,
       },
       {
         search:
