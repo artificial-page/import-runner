@@ -6,5 +6,5 @@ export * from "./function1"
 export default async function function2(input: {
   fn2Input: boolean
 }): Promise<{ id: string }> {
-  return await function1({})
+  return await function1()
 }

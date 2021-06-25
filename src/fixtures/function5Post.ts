@@ -6,9 +6,8 @@ import testRunner from "./testRunner"
 import function2 from "./function2"
 
 export default async (
-  input: Record<string, never> &
-    InType<typeof testRunner> &
+  input: InType<typeof testRunner> &
     (OutType<typeof function1> & OutType<typeof function2>)
 ): Promise<{ id: string }> => {
-  return await function1(input)
+  return await function1()
 }

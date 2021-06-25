@@ -4,35 +4,25 @@
 import importRunner from "../importRunner"
 
 export default async (
-  memo: (Record<string, never> & {
+  memo: ({
     fn2Input: boolean
-  } & (
-      | {
-          fn4Input: boolean
-        }
-      | Record<string, never>
-    ) &
-    Record<string, never>) &
-    Record<string, never> & {
-      fn2Input: boolean
-    } & Record<string, never>
+  } & {
+    fn4Input: boolean
+  }) & {
+    fn2Input: boolean
+  }
 ): Promise<
-  ((Record<string, never> & { id: string; x?: boolean }) &
-    ({
-      fn2Input: boolean
-    } & { id: string }) &
+  (({
+    fn2Input: boolean
+  } & { id: string }) &
     (
       | ({
           fn4Input: boolean
         } & { id: string })
-      | (Record<string, never> & { id: string })
-    ) &
-    (Record<string, never> & { id: string })) &
-    (Record<string, never> & { id: string; x?: boolean }) &
-    ({
+      | { id: string }
+    )) & { id: string; x?: boolean } & ({
       fn2Input: boolean
-    } & { id: string }) &
-    (Record<string, never> & { id: string })
+    } & { id: string }) & { id: string }
 > => {
   return await importRunner({
     memo,

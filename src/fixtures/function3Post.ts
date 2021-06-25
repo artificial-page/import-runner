@@ -8,8 +8,7 @@ import function4 from "./function4"
 import function5 from "./function5"
 
 export default async (
-  input: Record<string, never> &
-    InType<typeof testRunner> &
+  input: InType<typeof testRunner> &
     (OutType<typeof function1> &
       OutType<typeof function2> &
       (
@@ -17,5 +16,5 @@ export default async (
         | OutType<typeof function5>
       ))
 ): Promise<{ id: string }> => {
-  return await function1({})
+  return await function1()
 }

@@ -49,9 +49,7 @@ describe("defaultFunction", () => {
 
     expect(defaultFunctionDescription).toBeUndefined()
 
-    expect(defaultFunctionInputType).toBe(
-      "Record<string, never>"
-    )
+    expect(defaultFunctionInputType).toBe("void")
 
     expect(defaultFunctionOutputType).toBe(
       "{ id: string; x?: boolean }"

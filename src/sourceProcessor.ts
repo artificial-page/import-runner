@@ -287,7 +287,8 @@ export async function processFlow({
             }
 
             const inputTypes = `(input: ${
-              defaultFunctionInputType
+              defaultFunctionInputType &&
+              defaultFunctionInputType !== "void"
                 ? `${defaultFunctionInputType} & `
                 : ""
             }InType<typeof ${pathBasename}>${
@@ -400,14 +401,25 @@ export function flowDataTypes({
             defaultFunctionInputType &&
             defaultFunctionOutputType
           ) {
-            typeStr = `(${defaultFunctionInputType} & ${defaultFunctionOutputType})`
+            const types = [
+              defaultFunctionInputType,
+              defaultFunctionOutputType,
+            ].filter((t) => t && t !== "void")
+
+            if (types.length) {
+              typeStr = types.join(" & ")
+            }
+
+            if (types.length > 1) {
+              typeStr = `(${typeStr})`
+            }
           } else if (style === "InType" && base) {
             typeStr = `InType<typeof ${base}>`
           } else if (style === "OutType" && base) {
             typeStr = `OutType<typeof ${base}>`
           }
 
-          if (typeStr) {
+          if (typeStr && typeStr !== "void") {
             tmpOutput.push(typeStr)
           }
         } else {
