@@ -5,8 +5,10 @@ export const inputOutputRegex = /(.+)(?=\):)(.+)/s
 
 export default ({
   data,
+  pathBasename,
 }: {
   data: string
+  pathBasename?: string
 }): {
   defaultFunctionMatch?: RegExpMatchArray
   defaultFunctionOutputType?: string
@@ -33,9 +35,13 @@ export default ({
         /[\s\(]+([^:]+):\s*(.+)\s*/s
       )
 
-      const inputType = inputMatch[2].split(
-        /\s*\&[\s\(]*(In|Out|InOut)Type</
-      )[0]
+      const inputType = pathBasename
+        ? inputMatch[2].split(
+            new RegExp(
+              `\\s*\\&[\\s\\(]*(In|Out|InOut)Type<\\s*typeof\\s+${pathBasename}\\s*>`
+            )
+          )[0]
+        : inputMatch[2]
 
       const outputType = match[2]
         .match(/\):\s*(Promise<)?(.+)$/s)[2]
@@ -46,11 +52,7 @@ export default ({
         defaultFunctionOutputType:
           trimTypeOutput(outputType),
         defaultFunctionInputName: inputMatch[1],
-        defaultFunctionInputType: inputType?.match(
-          /^(In|Out|InOut)/
-        )
-          ? undefined
-          : trimTypeOutput(inputType),
+        defaultFunctionInputType: trimTypeOutput(inputType),
         defaultFunctionDescription: desc,
       }
     }

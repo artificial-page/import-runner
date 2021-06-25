@@ -74,14 +74,56 @@ export default (
       defaultFunctionInputType,
       defaultFunctionOutputType,
       defaultFunctionDescription,
-    } = defaultFunction({ data })
+    } = defaultFunction({ data, pathBasename: "nodeEnv" })
 
     expect(defaultFunctionDescription).toBeUndefined()
 
-    expect(defaultFunctionInputType).toBeUndefined()
+    expect(defaultFunctionInputType).toBe(
+      "InType<typeof ssm>"
+    )
 
     expect(defaultFunctionOutputType).toBe(
       "{ ssmClient: SSM }"
+    )
+  })
+
+  it("parses test case 2", async () => {
+    const data = `// Retrieve parsed [project.yml](../../../project.yml) data.
+
+import { OutType } from "io-type"
+import nodeEnv from "./nodeEnv"
+import projectYamlLoader, {
+  ProjectYamlType,
+} from "libs/projectYamlLoader/projectYamlLoader"
+
+export default async (
+  input: OutType<typeof nodeEnv>
+): Promise<{
+  projectYaml: ProjectYamlType
+}> => {
+  return {
+    projectYaml: await projectYamlLoader(input.nodeEnv),
+  }
+}`
+
+    const {
+      defaultFunctionInputType,
+      defaultFunctionOutputType,
+      defaultFunctionDescription,
+    } = defaultFunction({ data })
+
+    expect(defaultFunctionDescription).toBe(
+      "Retrieve parsed [project.yml](../../../project.yml) data."
+    )
+
+    expect(defaultFunctionInputType).toBe(
+      "OutType<typeof nodeEnv>"
+    )
+
+    expect(defaultFunctionOutputType).toBe(
+      `{
+  projectYaml: ProjectYamlType
+}`
     )
   })
 })

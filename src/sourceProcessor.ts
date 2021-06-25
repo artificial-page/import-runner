@@ -238,7 +238,15 @@ export async function processFlow({
             })
           }
 
-          const functionData = defaultFunction({ data })
+          const pathBasename = basename(path).replace(
+            /\.tsx?/,
+            ""
+          )
+
+          const functionData = defaultFunction({
+            data,
+            pathBasename,
+          })
 
           if (
             childPath({
@@ -256,10 +264,6 @@ export async function processFlow({
               toPath: path,
             })
 
-            const pathBasename = basename(path).replace(
-              /\.tsx?/,
-              ""
-            )
             const runnerImport = `import ${pathBasename} from "${relRunnerPath}"`
 
             const imports = [
