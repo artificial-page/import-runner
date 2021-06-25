@@ -6,7 +6,6 @@ import fsExtraType from "fs-extra"
 import emptyRunnerFunction from "./coders/emptyRunnerFunction"
 import relPath from "./helpers/relPath"
 import defaultFunction from "./parsers/defaultFunction"
-import { regex as defaultFunctionRegex } from "./parsers/defaultFunction"
 import importRunnerFlow from "./parsers/importRunnerFlow"
 import { FlowType } from "./parsers/importRunnerFlow"
 import importRunnerImport from "./parsers/importRunnerImport"
@@ -129,6 +128,9 @@ export default async function sourceProcessor(input: {
       style: "RawInOutType",
     }) || "Record<string, never>"
 
+  const promiseOutput =
+    functionData.defaultFunctionMatch[2].match(/Promise</)
+
   promises.push(
     fileReplacer({
       fsExtra,
@@ -138,15 +140,14 @@ export default async function sourceProcessor(input: {
       skipUnchanged: true,
       replacements: [
         {
-          search: defaultFunctionRegex,
-          replace: (m, p1, p2, p3, p4) => {
-            const x = `${p1}${p2}${`(${functionData.defaultFunctionInputName}: ${flowInputTypes}): `}${
-              p4.match(/Promise</) ? "Promise<" : ""
-            }${flowOutputTypes}${
-              p4.match(/Promise</) ? ">" : ""
-            }`
-            return x
-          },
+          search: functionData.defaultFunctionMatch[1],
+          replace: `(${functionData.defaultFunctionInputName}: ${flowInputTypes}`,
+        },
+        {
+          search: functionData.defaultFunctionMatch[2],
+          replace: `): ${
+            promiseOutput ? "Promise<" : ""
+          }${flowOutputTypes}${promiseOutput ? ">" : ""}`,
         },
       ],
     })
@@ -294,14 +295,8 @@ export async function processFlow({
                 skipUnchanged: true,
                 replacements: [
                   {
-                    search:
-                      defaultFunctionMatch[1] +
-                      defaultFunctionMatch[2] +
-                      defaultFunctionMatch[3],
-                    replace:
-                      defaultFunctionMatch[1] +
-                      defaultFunctionMatch[2] +
-                      inputTypes,
+                    search: defaultFunctionMatch[1],
+                    replace: inputTypes,
                   },
                   ...topImports({
                     imports,

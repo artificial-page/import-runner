@@ -1,7 +1,7 @@
 import topComments from "./topComments"
 
-export const regex =
-  /(export default )(async )?(.+)(?=\):)(.+)(?=\s+=>\s+\{)/s
+export const fnRegex = /^(export default )(async )?(.+)/ms
+export const inputOutputRegex = /(.+)(?=\):)(.+)/s
 
 export default ({
   data,
@@ -14,32 +14,39 @@ export default ({
   defaultFunctionInputType?: string
   defaultFunctionDescription?: string
 } => {
-  const match = data.match(regex)
+  const fnMatch = data.match(fnRegex)
+
   const desc = topComments({ data })
 
-  if (match) {
-    const inputMatch = match[3].match(
-      /[\s\(]+([^:]+):\s*(.+)\s*/s
-    )
+  if (fnMatch) {
+    const head = fnMatch[3].split(/\s=>\s/)[0]
+    const match = head.match(inputOutputRegex)
 
-    const inputType = inputMatch[2].split(
-      /\s*\&[\s\(]*(In|Out|InOut)Type</
-    )[0]
-
-    const outputType = match[4]
-      .match(/\):\s*(Promise<)?(.+)$/s)[2]
-      ?.replace(/>$/, "")
-
-    return {
-      defaultFunctionMatch: match,
-      defaultFunctionOutputType: trimTypeOutput(outputType),
-      defaultFunctionInputName: inputMatch[1],
-      defaultFunctionInputType: inputType?.match(
-        /^(In|Out|InOut)/
+    if (match) {
+      const inputMatch = match[1].match(
+        /[\s\(]+([^:]+):\s*(.+)\s*/s
       )
-        ? undefined
-        : trimTypeOutput(inputType),
-      defaultFunctionDescription: desc,
+
+      const inputType = inputMatch[2].split(
+        /\s*\&[\s\(]*(In|Out|InOut)Type</
+      )[0]
+
+      const outputType = match[2]
+        .match(/\):\s*(Promise<)?(.+)$/s)[2]
+        ?.replace(/>$/, "")
+
+      return {
+        defaultFunctionMatch: match,
+        defaultFunctionOutputType:
+          trimTypeOutput(outputType),
+        defaultFunctionInputName: inputMatch[1],
+        defaultFunctionInputType: inputType?.match(
+          /^(In|Out|InOut)/
+        )
+          ? undefined
+          : trimTypeOutput(inputType),
+        defaultFunctionDescription: desc,
+      }
     }
   }
 
