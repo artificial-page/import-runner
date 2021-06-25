@@ -83,7 +83,8 @@ export default async function sourceProcessor(input: {
 
   if (pathCache) {
     for (const flowPath of flowPathsUnique) {
-      pathCache[flowPath] = path
+      pathCache[join(dirname(path), flowPath + ".ts")] =
+        path
     }
   }
 
