@@ -14,6 +14,7 @@ import { OutType } from "io-type"
 import topImports from "./replacers/topImports"
 import childPath from "./helpers/childPath"
 import readme from "./replacers/readme"
+import emptyDefaultFunction from "./coders/emptyDefaultFunction"
 
 export const instructions = ["all", "each", "route"]
 
@@ -105,15 +106,17 @@ export default async function sourceProcessor(input: {
 
   const functionData = defaultFunction({ data })
 
-  const flowInputTypes = flowDataTypes({
-    flowData,
-    style: "RawInType",
-  })
+  const flowInputTypes =
+    flowDataTypes({
+      flowData,
+      style: "RawInType",
+    }) || "Record<string, never>"
 
-  const flowOutputTypes = flowDataTypes({
-    flowData,
-    style: "RawInOutType",
-  })
+  const flowOutputTypes =
+    flowDataTypes({
+      flowData,
+      style: "RawInOutType",
+    }) || "Record<string, never>"
 
   promises.push(
     fileReplacer({
@@ -208,9 +211,20 @@ export async function processFlow({
             `${importPath}.ts`
           )
 
-          const data = (
-            await fsExtra.readFile(importPath)
-          ).toString()
+          let data: string
+
+          if (await fsExtra.pathExists(importPath)) {
+            data = (
+              await fsExtra.readFile(importPath)
+            ).toString()
+          } else {
+            data = await fileReplacer({
+              data: emptyDefaultFunction(),
+              dest: importPath,
+              eslint,
+              fsExtra,
+            })
+          }
 
           const functionData = defaultFunction({ data })
 
