@@ -36,7 +36,7 @@ export default async function sourceProcessor(input: {
   prettier: typeof prettierType
   path: string
   srcRootPath: string
-  pathCache?: Record<string, string>
+  pathCache?: Record<string, string[]>
   readme?: boolean
 }): Promise<void> {
   const {
@@ -50,10 +50,15 @@ export default async function sourceProcessor(input: {
   } = input
 
   if (pathCache && pathCache[path]) {
-    return await sourceProcessor({
-      ...input,
-      path: pathCache[path],
-    })
+    await Promise.all(
+      pathCache[path].map((p) =>
+        sourceProcessor({
+          ...input,
+          path: p,
+        })
+      )
+    )
+    return
   }
 
   let data = (await fsExtra.readFile(path)).toString()
@@ -83,9 +88,15 @@ export default async function sourceProcessor(input: {
   })
 
   if (pathCache) {
-    for (const flowPath of flowPathsUnique) {
-      pathCache[join(dirname(path), flowPath + ".ts")] =
-        path
+    const pathDirname = dirname(path)
+
+    for (let p of flowPathsUnique) {
+      p = join(pathDirname, p + ".ts")
+      pathCache[p] = pathCache[p] || []
+
+      if (!pathCache[p].includes(path)) {
+        pathCache[p].push(path)
+      }
     }
   }
 
