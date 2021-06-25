@@ -1,5 +1,6 @@
 import { ESLint } from "eslint"
 import { basename, dirname, join } from "path"
+import prettierType from "prettier"
 import fileReplacerType from "file-replacer"
 import fsExtraType from "fs-extra"
 import emptyRunnerFunction from "./coders/emptyRunnerFunction"
@@ -31,6 +32,7 @@ export default async (input: {
   eslint: ESLint
   fileReplacer: typeof fileReplacerType
   fsExtra: typeof fsExtraType
+  prettier: typeof prettierType
   path: string
   srcRootPath: string
   pathCache?: Record<string, string[]>
@@ -39,6 +41,7 @@ export default async (input: {
   const {
     fileReplacer,
     fsExtra,
+    prettier,
     path,
     eslint,
     srcRootPath,
@@ -125,7 +128,7 @@ export default async (input: {
     defaultFunctionOutputType,
   } = defaultFunction({ data })
 
-  await readme({
+  const { readmeData, readmePath } = await readme({
     fileReplacer,
     flowData,
     fsExtra,
@@ -135,6 +138,18 @@ export default async (input: {
     pathInput: defaultFunctionInputType,
     pathOutput: defaultFunctionOutputType,
     srcRootPath,
+  })
+
+  const options = await prettier.resolveConfig(readmePath)
+  const formatted = prettier.format(readmeData, {
+    ...options,
+    filepath: readmePath,
+  })
+
+  await fileReplacer({
+    data: formatted,
+    dest: readmePath,
+    fsExtra,
   })
 }
 

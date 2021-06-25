@@ -2,6 +2,7 @@ import expect from "expect"
 import { ESLint } from "eslint"
 import fileReplacer from "file-replacer"
 import fsExtra from "fs-extra"
+import prettier from "prettier"
 import path from "path"
 import sourceProcessor2 from "./sourceProcessor"
 
@@ -34,6 +35,7 @@ describe("sourceProcessor", () => {
       eslint,
       fileReplacer,
       fsExtra,
+      prettier,
       path: path.join(tmp, "testRunner.ts"),
       srcRootPath: tmp,
     })

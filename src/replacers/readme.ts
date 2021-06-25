@@ -25,9 +25,9 @@ export default async ({
   flowData: FlowDataType
   fsExtra: typeof fsExtraType
   srcRootPath: string
-}): Promise<void> => {
+}): Promise<{ readmeData: string; readmePath: string }> => {
   const pathBasename = basename(path, ".ts")
-  const readMePath = join(dirname(path), "README.md")
+  const readmePath = join(dirname(path), "README.md")
 
   const { toc, content } = processFlow({
     fileReplacer,
@@ -42,14 +42,14 @@ export default async ({
   await fileReplacer({
     fsExtra,
     data: emptyReadme({ pathBasename }),
-    dest: readMePath,
+    dest: readmePath,
     createOnly: true,
   })
 
-  await fileReplacer({
+  const readmeData = await fileReplacer({
     fsExtra,
-    src: readMePath,
-    dest: readMePath,
+    src: readmePath,
+    dest: readmePath,
     replacements: [
       {
         search:
@@ -84,6 +84,8 @@ export default async ({
       },
     ],
   })
+
+  return { readmeData, readmePath }
 }
 
 export function processFlow({
