@@ -38,7 +38,7 @@ export default ({
       const inputType = pathBasename
         ? inputMatch[2].split(
             new RegExp(
-              `\\s*\\&[\\s\\(]*(In|Out|InOut)Type<\\s*typeof\\s+${pathBasename}\\s*>`
+              `\\s*\\&*[\\s\\(]*(In|Out|InOut)Type<\\s*typeof\\s+${pathBasename}\\s*>`
             )
           )[0]
         : inputMatch[2]
