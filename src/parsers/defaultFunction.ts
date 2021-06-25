@@ -1,6 +1,6 @@
 import topComments from "./topComments"
 
-export const fnRegex = /^(export default )(async )?(.+)/ms
+export const fnRegex = /^(export default)([^(]+)(.+)/ms
 export const inputOutputRegex = /(.+)(?=\):)(.+)/s
 
 export default ({
@@ -19,7 +19,13 @@ export default ({
   const desc = topComments({ data })
 
   if (fnMatch) {
-    const head = fnMatch[3].split(/\s=>\s/)[0]
+    const headMatch = fnMatch[3].match(
+      /(.+)((>) => {|(}>) => {|(}) => {|(}) {|(}>) {)\n\s{2}/s
+    )
+
+    const head =
+      headMatch[1] + headMatch.slice(3).find((x) => x)
+
     const match = head.match(inputOutputRegex)
 
     if (match) {

@@ -6,11 +6,11 @@ import { InType } from "io-type"
 import testRunner from "./testRunner"
 import { OutType } from "io-type"
 
-export default async (
+export default async function function2(
   input: {
     fn2Input: boolean
   } & InType<typeof testRunner> &
     OutType<typeof function1>
-): Promise<{ id: string }> => {
+): Promise<{ id: string }> {
   return await function1({})
 }
