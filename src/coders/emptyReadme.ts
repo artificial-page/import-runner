@@ -4,7 +4,8 @@ export default ({
   pathBasename: string
 }): string => {
   return /* markdown */ `
-# ${pathBasename}
+<!-- BEGIN NAME -->
+<!-- END NAME -->
 
 <!-- BEGIN DESC -->
 <!-- END DESC -->
