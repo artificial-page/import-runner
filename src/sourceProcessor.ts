@@ -286,7 +286,11 @@ export async function processFlow({
               )
             }
 
-            const inputTypes = `(input: ${defaultFunctionInputType} & InType<typeof ${pathBasename}>${
+            const inputTypes = `(input: ${
+              defaultFunctionInputType
+                ? `${defaultFunctionInputType} & `
+                : ""
+            }InType<typeof ${pathBasename}>${
               flowInputTypes ? ` & ${flowInputTypes}` : ""
             }`
 
