@@ -150,7 +150,7 @@ export function processFlow({
             .replace(/\s/g, "-")
             .replace(/[^a-z\-]/g, "")
           const tocLink = `[${simplePath}](#${tocAnchor})`
-          const contentLink = `[${simplePath}](${relSrcPath})`
+          const contentLink = `[${simplePath}](${relSrcPath}#L1)`
 
           toc += `${indent}* ${tocLink}${
             desc ? ` — ${desc}` : ""

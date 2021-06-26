@@ -6,7 +6,7 @@ import {
 export async function importRunner(
   importRunnerInput: ImportRunnerInput
 ): Promise<any> {
-  const { all, each, promise } = importRunnerInput
+  const { all, each, promise, route } = importRunnerInput
   let { memo } = importRunnerInput
 
   memo = memo ?? {}
@@ -18,9 +18,9 @@ export async function importRunner(
       const obj = await fn(memo)
       addObjectToMemo({ memo, obj })
     }
-  } else if (all) {
+  } else if (all || route) {
     const out = await Promise.all(
-      all.map((input) =>
+      (all || route).map((input) =>
         importRunner(addMemoToInput({ memo, input }))
       )
     )
