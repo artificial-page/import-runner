@@ -67,14 +67,14 @@ export default async ({
         search:
           /<!-- BEGIN INPUT -->\n(.*)<!-- END INPUT -->/gms,
         replace: `<!-- BEGIN INPUT -->\n\n\`\`\`ts\n${
-          pathInput || ""
+          pathInput ? dedent(pathInput) : ""
         }\n\`\`\`\n\n<!-- END INPUT -->`,
       },
       {
         search:
           /<!-- BEGIN OUTPUT -->\n(.*)<!-- END OUTPUT -->/gms,
         replace: `<!-- BEGIN OUTPUT -->\n\n\`\`\`ts\n${
-          pathOutput || ""
+          pathOutput ? dedent(pathOutput) : ""
         }\n\`\`\`\n\n<!-- END OUTPUT -->`,
       },
       {
@@ -164,7 +164,7 @@ ${desc ? `\n${desc}\n` : ""}${
 #### Input
 
 \`\`\`ts
-${inputType}
+${dedent(inputType)}
 \`\`\`
 `
               : ""
@@ -174,7 +174,7 @@ ${inputType}
 #### Output
 
 \`\`\`ts
-${outputType}
+${dedent(outputType)}
 \`\`\`
 `
               : ""
@@ -214,4 +214,12 @@ export function pathLink({
   )
   const relPath = relative(pathDirname, path)
   return `[${srcRelPath}](${relPath})`
+}
+
+export function dedent(str: string): string {
+  str = str.replace(/^\n/, "")
+  const match = str.match(/^\s+/)
+  return match
+    ? str.replace(new RegExp("^" + match[0], "gm"), "")
+    : str
 }
