@@ -12,7 +12,7 @@ export default async (
     fn2Input: boolean
   }
 ): Promise<
-  (({
+  ({ id: string; x?: boolean } & ({
     fn2Input: boolean
   } & { id: string }) &
     (
@@ -20,7 +20,7 @@ export default async (
           fn4Input: boolean
         } & { id: string })
       | { id: string }
-    )) & { id: string; x?: boolean } & ({
+    ) & { id: string }) & { id: string; x?: boolean } & ({
       fn2Input: boolean
     } & { id: string }) & { id: string }
 > => {

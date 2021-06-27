@@ -398,8 +398,8 @@ export function flowDataTypes({
             typeStr = defaultFunctionOutputType
           } else if (
             style === "RawInOutType" &&
-            defaultFunctionInputType &&
-            defaultFunctionOutputType
+            (defaultFunctionInputType ||
+              defaultFunctionOutputType)
           ) {
             const types = [
               defaultFunctionInputType,
