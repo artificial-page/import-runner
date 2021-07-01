@@ -57,7 +57,6 @@ export default async function sourceProcessor(input: {
         })
       )
     )
-    return
   }
 
   let data = (await fsExtra.readFile(path)).toString()
