@@ -19,11 +19,11 @@ describe("importRunner", () => {
     expect(getLastCall().args).toEqual([{ id }])
   })
 
-  it("runs with each and memo", async () => {
+  it("runs with each and input", async () => {
     setDelay(5)
 
     const out = await importRunner({
-      memo: { test: true },
+      input: { test: true },
       each: [
         import("./fixtures/function1"),
         import("./fixtures/function1"),
@@ -31,7 +31,7 @@ describe("importRunner", () => {
     })
 
     const { id } = getLastCall()
-    expect(out).toEqual({ id, test: true })
+    expect(out).toEqual({ id })
     expect(getCalls()).toEqual([
       {
         args: [{ id, test: true }],
@@ -44,11 +44,11 @@ describe("importRunner", () => {
     ])
   })
 
-  it("runs with all and memo", async () => {
+  it("runs with all and input", async () => {
     setDelay(5)
 
     const out = await importRunner({
-      memo: { test: true },
+      input: { test: true },
       all: [
         import("./fixtures/function1"),
         import("./fixtures/function1"),
@@ -56,7 +56,7 @@ describe("importRunner", () => {
     })
 
     const { id } = getLastCall()
-    expect(out).toEqual({ id, test: true })
+    expect(out).toEqual({ id })
     expect(getCalls()).toEqual([
       {
         args: [{ id, test: true }],

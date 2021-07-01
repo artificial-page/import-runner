@@ -18,6 +18,7 @@ export interface ImportRunnerInput {
     | Promise<ImportType>
     | ImportType
   )[]
+  input?: any
   memo?: any
   promise?: Promise<ImportType>
 }

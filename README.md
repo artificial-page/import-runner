@@ -15,11 +15,11 @@ Import runner provides a shorthand for executing complex control flows using dyn
 ```typescript
 import importRunner from "import-runner"
 
-export async function thisThat(
-  memo: { hi: boolean }
-): Promise<any> {
+export async function thisThat(input: {
+  hi: boolean
+}): Promise<any> {
   return await importRunner({
-    memo,
+    input,
     each: [
       import("./myFunction"),
       import("./thatFunction"),
@@ -44,11 +44,11 @@ export async function thisThat(
 
 > ℹ️ If a function call returns an object, it is assigned to the memo (`Object.assign`)
 
-| Option | Description |
-| :--- | :--- |
-| `all` | Concurrently execute an array of functions (may be nested) |
-| `each` | Sequentially execute an array of functions (may be nested) |
-| `memo` | An object that acts as input and output for function calls (root only) |
+| Option  | Description                                                |
+| :------ | :--------------------------------------------------------- |
+| `all`   | Concurrently execute an array of functions (may be nested) |
+| `each`  | Sequentially execute an array of functions (may be nested) |
+| `input` | Input object                                               |
 
 ## 🤖 Low code
 

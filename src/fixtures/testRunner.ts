@@ -4,10 +4,10 @@
 import importRunner from "../importRunner"
 
 export default async (
-  memo: Record<string, never> = {}
+  input: Record<string, never> = {}
 ): Promise<any> => {
   return await importRunner({
-    memo,
+    input,
     all: [
       import("./function1"),
       import("./function2"),

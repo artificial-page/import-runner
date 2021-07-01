@@ -4,7 +4,7 @@
 import importRunner from "../importRunner"
 
 export default async (
-  memo: ({
+  input: ({
     fn2Input: boolean
   } & {
     fn4Input: boolean
@@ -12,20 +12,15 @@ export default async (
     fn2Input: boolean
   }
 ): Promise<
-  ({ id: string; x?: boolean } & ({
-    fn2Input: boolean
-  } & { id: string }) &
-    (
-      | ({
-          fn4Input: boolean
-        } & { id: string })
+  ({ id: string; x?: boolean } & { id: string } & (
       | { id: string }
-    ) & { id: string }) & { id: string; x?: boolean } & ({
-      fn2Input: boolean
-    } & { id: string }) & { id: string }
+      | { id: string }
+    ) & { id: string }) & { id: string; x?: boolean } & {
+    id: string
+  } & { id: string }
 > => {
   return await importRunner({
-    memo,
+    input,
     all: [
       import("./function1"),
       import("./function2"),

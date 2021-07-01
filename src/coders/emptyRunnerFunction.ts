@@ -3,10 +3,10 @@ export default (): string => {
     import importRunner from "import-runner"
 
     export default async (
-      memo: Record<string, never> = {}
+      input: Record<string, never> = {}
     ): Promise<Record<string, never>> => {
       return await importRunner({
-        memo,
+        input,
         each: [
           // import("./myFunction")
         ],

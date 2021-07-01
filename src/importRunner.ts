@@ -7,32 +7,33 @@ export async function importRunner(
   importRunnerInput: ImportRunnerInput
 ): Promise<any> {
   const { all, each, promise, route } = importRunnerInput
-  let { memo } = importRunnerInput
+  let { input, memo } = importRunnerInput
 
+  input = input ?? {}
   memo = memo ?? {}
 
   if (promise) {
     const { default: fn } = await promise
 
     if (fn) {
-      const obj = await fn(memo)
-      addObjectToMemo({ memo, obj })
+      const obj = await fn(input)
+      addObjectToMemo({ input, memo, obj })
     }
   } else if (all || route) {
     const out = await Promise.all(
-      (all || route).map((input) =>
-        importRunner(addMemoToInput({ memo, input }))
+      (all || route).map((i) =>
+        importRunner(addInput({ input, memo, addInput: i }))
       )
     )
     for (const obj of out) {
-      addObjectToMemo({ memo, obj })
+      addObjectToMemo({ input, memo, obj })
     }
   } else if (each) {
-    for (const input of each) {
+    for (const i of each) {
       const obj = await importRunner(
-        addMemoToInput({ memo, input })
+        addInput({ memo, input, addInput: i })
       )
-      addObjectToMemo({ memo, obj })
+      addObjectToMemo({ input, memo, obj })
     }
   }
 
@@ -40,33 +41,39 @@ export async function importRunner(
 }
 
 export function addObjectToMemo({
+  input,
   memo,
   obj,
 }: {
+  input: any
   memo: any
   obj: any
 }): void {
   if (typeof obj === "object" && !Array.isArray(obj)) {
+    Object.assign(input, obj)
     Object.assign(memo, obj)
   }
 }
 
-export function addMemoToInput({
+export function addInput({
   memo,
   input,
+  addInput,
 }: {
   memo: any
-  input:
+  input: any
+  addInput:
     | ImportRunnerInput
     | Promise<ImportType>
     | ImportType
 }): ImportRunnerInput {
-  return input["then"]
+  return addInput["then"]
     ? {
+        input,
         memo,
-        promise: input as Promise<ImportType>,
+        promise: addInput as Promise<ImportType>,
       }
-    : { memo, ...input }
+    : { input, memo, ...addInput }
 }
 
 export default importRunner

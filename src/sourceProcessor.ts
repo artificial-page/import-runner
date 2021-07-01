@@ -125,7 +125,7 @@ export default async function sourceProcessor(input: {
   const flowOutputTypes =
     flowDataTypes({
       flowData,
-      style: "RawInOutType",
+      style: "RawOutType",
     }) || "Record<string, never>"
 
   const promiseOutput =
