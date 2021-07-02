@@ -34,26 +34,35 @@ export default ({
 
     if (match) {
       const inputMatch = match[1].match(
-        /[\s\(]+([^:]+):( |\n)(\s*.+)/s
+        /\(\n?( *)([^:]+):( |\n)(\s*.+)/s
       )
 
-      const inputType = pathBasename
-        ? inputMatch[3].split(
-            new RegExp(
-              `\\s*\\&*[\\s\\(]*(In|Out|InOut)Type<\\s*typeof\\s+${pathBasename}\\s*>`
-            )
-          )[0]
-        : inputMatch[3]
+      const inputIndent = inputMatch[1]
 
-      const outputType = match[2]
-        .match(/\):\s*(Promise<)?(.+)$/s)[2]
-        ?.replace(/>$/, "")
+      const inputType =
+        inputIndent + pathBasename
+          ? inputMatch[4].split(
+              new RegExp(
+                `\\s*\\&*[\\s\\(]*(In|Out|InOut)Type<\\s*typeof\\s+${pathBasename}\\s*>`
+              )
+            )[0]
+          : inputMatch[4]
+
+      const outputMatch = match[2].match(
+        /\):(\n| )?(\s*)(Promise<)?(.+)$/s
+      )
+
+      const outputIndent = outputMatch[2]
+
+      const outputType = outputMatch[4]
+        ? outputIndent + outputMatch[4]?.replace(/>$/, "")
+        : undefined
 
       return {
         defaultFunctionMatch: match,
         defaultFunctionOutputType: trimType(outputType),
         defaultFunctionRawOutputType: outputType,
-        defaultFunctionInputName: inputMatch[1],
+        defaultFunctionInputName: inputMatch[2],
         defaultFunctionInputType: trimType(inputType),
         defaultFunctionRawInputType: inputType,
         defaultFunctionDescription: desc,

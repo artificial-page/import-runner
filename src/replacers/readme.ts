@@ -66,16 +66,16 @@ export default async ({
       {
         search:
           /<!-- BEGIN INPUT -->\n(.*)<!-- END INPUT -->/gms,
-        replace: `<!-- BEGIN INPUT -->\n\n\`\`\`ts\n${
-          pathInput ? dedent(pathInput) : ""
-        }\n\`\`\`\n\n<!-- END INPUT -->`,
+        replace: `<!-- BEGIN INPUT -->\n\n\`\`\`ts\n${dedent(
+          pathInput
+        )}\n\`\`\`\n\n<!-- END INPUT -->`,
       },
       {
         search:
           /<!-- BEGIN OUTPUT -->\n(.*)<!-- END OUTPUT -->/gms,
-        replace: `<!-- BEGIN OUTPUT -->\n\n\`\`\`ts\n${
-          pathOutput ? dedent(pathOutput) : ""
-        }\n\`\`\`\n\n<!-- END OUTPUT -->`,
+        replace: `<!-- BEGIN OUTPUT -->\n\n\`\`\`ts\n${dedent(
+          pathOutput
+        )}\n\`\`\`\n\n<!-- END OUTPUT -->`,
       },
       {
         search:
@@ -217,32 +217,14 @@ export function pathLink({
 }
 
 export function dedent(str: string): string {
-  if (str) {
-    str = str.replace(/(^\n*|\n*$)/g, "")
+  if (!str) {
+    return ""
   }
 
-  if (!str || !str.includes("\n")) {
-    return str
-  }
-  const indentLengths = str
-    .match(/^ */gm)
-    .map((s) => s.length)
+  str = str.replace(/(^\n*|\n*$)/g, "")
+  const match = str.match(/^\s+/)
 
-  if (indentLengths.length) {
-    const minIndent = Math.min(...indentLengths)
-
-    if (minIndent > 2 || indentLengths[0] === 2) {
-      str =
-        " ".repeat(
-          indentLengths[indentLengths.length - 1] -
-            minIndent
-        ) +
-        str.replace(
-          new RegExp("^" + " ".repeat(minIndent), "gm"),
-          ""
-        )
-    }
-  }
-
-  return str
+  return match
+    ? str.replace(new RegExp("^" + match[0], "gm"), "")
+    : str
 }
