@@ -12,8 +12,10 @@ export default ({
 }): {
   defaultFunctionMatch?: RegExpMatchArray
   defaultFunctionOutputType?: string
+  defaultFunctionRawOutputType?: string
   defaultFunctionInputName?: string
   defaultFunctionInputType?: string
+  defaultFunctionRawInputType?: string
   defaultFunctionDescription?: string
 } => {
   const fnMatch = data.match(fnRegex)
@@ -32,7 +34,7 @@ export default ({
 
     if (match) {
       const inputMatch = match[1].match(
-        /[\s\(]+([^:]+):\s*[|&]*\s*(.+)\s*/s
+        /[\s\(]+([^:]+): (.+)/s
       )
 
       const inputType = pathBasename
@@ -49,10 +51,11 @@ export default ({
 
       return {
         defaultFunctionMatch: match,
-        defaultFunctionOutputType:
-          trimTypeOutput(outputType),
+        defaultFunctionOutputType: trimType(outputType),
+        defaultFunctionRawOutputType: outputType,
         defaultFunctionInputName: inputMatch[1],
-        defaultFunctionInputType: trimTypeOutput(inputType),
+        defaultFunctionInputType: trimType(inputType),
+        defaultFunctionRawInputType: inputType,
         defaultFunctionDescription: desc,
       }
     }
@@ -61,16 +64,6 @@ export default ({
   return {}
 }
 
-export function trimTypeOutput(str: string): string {
-  if (!str) {
-    return
-  }
-
-  str = str.trim()
-
-  if (str.includes("\n") && str.includes("\n    ")) {
-    return `  ${str}`
-  }
-
-  return str
+export function trimType(str: string): string {
+  return str.replace(/(^\s*[|&]\s*|\s*$)/, "")
 }

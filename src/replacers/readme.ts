@@ -137,8 +137,8 @@ export function processFlow({
           const { functionData } = flow
           const {
             defaultFunctionDescription: desc,
-            defaultFunctionInputType: inputType,
-            defaultFunctionOutputType: outputType,
+            defaultFunctionRawInputType: inputType,
+            defaultFunctionRawOutputType: outputType,
           } = functionData
 
           const relPath = relative(pathDirname, srcRootPath)
@@ -217,9 +217,32 @@ export function pathLink({
 }
 
 export function dedent(str: string): string {
-  str = str.replace(/^\n/, "")
-  const match = str.match(/^\s+/)
-  return match
-    ? str.replace(new RegExp("^" + match[0], "gm"), "")
-    : str
+  if (str) {
+    str = str.replace(/(^\n*|\n*$)/g, "")
+  }
+
+  if (!str || !str.includes("\n")) {
+    return str
+  }
+  const indentLengths = str
+    .match(/^ */gm)
+    .map((s) => s.length)
+
+  if (indentLengths.length) {
+    const minIndent = Math.min(...indentLengths)
+
+    if (minIndent > 2 || indentLengths[0] === 2) {
+      str =
+        " ".repeat(
+          indentLengths[indentLengths.length - 1] -
+            minIndent
+        ) +
+        str.replace(
+          new RegExp("^" + " ".repeat(minIndent), "gm"),
+          ""
+        )
+    }
+  }
+
+  return str
 }

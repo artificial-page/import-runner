@@ -156,8 +156,8 @@ export default async function sourceProcessor(input: {
 
   data = (await fsExtra.readFile(path)).toString()
   const {
-    defaultFunctionInputType,
-    defaultFunctionOutputType,
+    defaultFunctionRawInputType,
+    defaultFunctionRawOutputType,
   } = defaultFunction({ data })
 
   const { readmeData, readmePath } = await readme({
@@ -167,8 +167,8 @@ export default async function sourceProcessor(input: {
     path,
     pathDescription:
       functionData.defaultFunctionDescription,
-    pathInput: defaultFunctionInputType,
-    pathOutput: defaultFunctionOutputType,
+    pathInput: defaultFunctionRawInputType,
+    pathOutput: defaultFunctionRawOutputType,
     srcRootPath,
   })
 
