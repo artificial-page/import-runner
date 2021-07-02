@@ -1,3 +1,4 @@
+import trimReturns from "../replacers/trimReturns"
 import topComments from "./topComments"
 
 export const fnRegex = /^(export default)([^(]+)(.+)/ms
@@ -37,7 +38,7 @@ export default ({
         /\(\n?( *)([^:]+):( |\n)(\s*.+)/s
       )
 
-      const inputBody = trimType(
+      const inputBody = trimReturns(
         pathBasename
           ? inputMatch[4].split(
               new RegExp(
@@ -57,7 +58,7 @@ export default ({
         /\):\n? ?( *)(Promise<)?(.+)$/s
       )
 
-      const outputBody = trimType(outputMatch[3])
+      const outputBody = trimReturns(outputMatch[3])
       const outputIndent = outputBody.includes("\n")
         ? outputMatch[1]
         : ""

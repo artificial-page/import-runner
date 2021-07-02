@@ -6,6 +6,7 @@ import {
   instructions,
 } from "../sourceProcessor"
 import emptyReadme from "../coders/emptyReadme"
+import trimReturns from "./trimReturns"
 
 export default async ({
   path,
@@ -221,7 +222,7 @@ export function dedent(str: string): string {
     return ""
   }
 
-  str = str.replace(/(^\n*|\n*$)/g, "")
+  str = trimReturns(str)
   const match = str.match(/^\s+/)
 
   return match
