@@ -48,9 +48,11 @@ export default ({
           : inputMatch[4]
       )
 
-      const inputIndent = inputBody.includes("\n")
-        ? inputMatch[1]
-        : ""
+      const inputIndent =
+        inputBody.includes("\n") &&
+        !inputMatch[3].includes("\n")
+          ? inputMatch[1]
+          : ""
 
       const inputType = inputIndent + inputBody
 
