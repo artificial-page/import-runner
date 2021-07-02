@@ -60,13 +60,16 @@ export default ({
         /\):\n? ?( *)(Promise<)?(.+)$/s
       )
 
-      const outputBody = trimReturns(outputMatch[3])
+      const outputBody = trimReturns(
+        outputMatch[3]?.replace(/>$/, "")
+      )
+
       const outputIndent = outputBody.includes("\n")
         ? outputMatch[1]
         : ""
 
       const outputType = outputBody
-        ? outputIndent + outputBody.replace(/>$/, "")
+        ? outputIndent + outputBody
         : undefined
 
       return {
