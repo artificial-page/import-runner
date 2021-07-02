@@ -37,25 +37,33 @@ export default ({
         /\(\n?( *)([^:]+):( |\n)(\s*.+)/s
       )
 
-      const inputIndent = inputMatch[1]
-
-      const inputType =
-        inputIndent + pathBasename
+      const inputBody = trimType(
+        pathBasename
           ? inputMatch[4].split(
               new RegExp(
                 `\\s*\\&*[\\s\\(]*(In|Out|InOut)Type<\\s*typeof\\s+${pathBasename}\\s*>`
               )
             )[0]
           : inputMatch[4]
-
-      const outputMatch = match[2].match(
-        /\):(\n| )?(\s*)(Promise<)?(.+)$/s
       )
 
-      const outputIndent = outputMatch[2]
+      const inputIndent = inputBody.includes("\n")
+        ? inputMatch[1]
+        : ""
 
-      const outputType = outputMatch[4]
-        ? outputIndent + outputMatch[4]?.replace(/>$/, "")
+      const inputType = inputIndent + inputBody
+
+      const outputMatch = match[2].match(
+        /\):\n? ?( *)(Promise<)?(.+)$/s
+      )
+
+      const outputBody = trimType(outputMatch[3])
+      const outputIndent = outputBody.includes("\n")
+        ? outputMatch[1]
+        : ""
+
+      const outputType = outputBody
+        ? outputIndent + outputBody.replace(/>$/, "")
         : undefined
 
       return {
@@ -74,5 +82,5 @@ export default ({
 }
 
 export function trimType(str: string): string {
-  return str.replace(/(^\s*[|&]\s*|\s*$)/, "")
+  return str ? str.replace(/(^\s*[|&]\s*|\s*$)/, "") : ""
 }
