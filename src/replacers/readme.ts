@@ -39,16 +39,16 @@ export default async ({
     srcRootPath,
   })
 
-  await fileReplacer({
+  let readmeData = await fileReplacer({
     fsExtra,
     data: emptyReadme({ pathBasename }),
     dest: readmePath,
     createOnly: true,
   })
 
-  const readmeData = await fileReplacer({
+  readmeData = await fileReplacer({
     fsExtra,
-    src: readmePath,
+    data: readmeData,
     dest: readmePath,
     replacements: [
       {
