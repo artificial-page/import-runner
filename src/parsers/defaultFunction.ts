@@ -34,7 +34,7 @@ export default ({
 
     if (match) {
       const inputMatch = match[1].match(
-        /[\s\(]+([^:]+): (.+)/s
+        /[\s\(]+([^:]+):(\s*.+)/s
       )
 
       const inputType = pathBasename
