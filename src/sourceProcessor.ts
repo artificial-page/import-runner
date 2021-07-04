@@ -378,32 +378,32 @@ export function flowDataTypes({
             ""
           )
 
-          const {
-            defaultFunctionInputType,
-            defaultFunctionOutputType,
+          let {
+            defaultFunctionInputType: inputType,
+            defaultFunctionOutputType: outputType,
           } = data.functionData
+
+          inputType = inputType.includes("\n")
+            ? `(${inputType})`
+            : inputType
+
+          outputType = outputType.includes("\n")
+            ? `(${outputType})`
+            : outputType
 
           let typeStr: string
 
-          if (
-            style === "RawInType" &&
-            defaultFunctionInputType
-          ) {
-            typeStr = defaultFunctionInputType
-          } else if (
-            style === "RawOutType" &&
-            defaultFunctionOutputType
-          ) {
-            typeStr = defaultFunctionOutputType
+          if (style === "RawInType" && inputType) {
+            typeStr = inputType
+          } else if (style === "RawOutType" && outputType) {
+            typeStr = outputType
           } else if (
             style === "RawInOutType" &&
-            (defaultFunctionInputType ||
-              defaultFunctionOutputType)
+            (inputType || outputType)
           ) {
-            const types = [
-              defaultFunctionInputType,
-              defaultFunctionOutputType,
-            ].filter((t) => t && t !== "void")
+            const types = [inputType, outputType].filter(
+              (t) => t && t !== "void"
+            )
 
             if (types.length) {
               typeStr = types.join(" & ")
