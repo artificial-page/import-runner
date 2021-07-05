@@ -383,11 +383,11 @@ export function flowDataTypes({
             defaultFunctionOutputType: outputType,
           } = data.functionData
 
-          inputType = inputType.includes("\n")
+          inputType = inputType.match(/\s[|&]\s/)
             ? `(${inputType})`
             : inputType
 
-          outputType = outputType.includes("\n")
+          outputType = outputType.match(/\s[|&]\s/)
             ? `(${outputType})`
             : outputType
 
@@ -402,7 +402,9 @@ export function flowDataTypes({
             (inputType || outputType)
           ) {
             const types = [inputType, outputType].filter(
-              (t) => t && t !== "void"
+              (t, index, self) =>
+                t &&
+                (t !== "void" || self.indexOf(t) === index)
             )
 
             if (types.length) {
@@ -434,7 +436,12 @@ export function flowDataTypes({
 
       if (tmpOutput.length) {
         output.push(
-          tmpOutput.join(key === "route" ? " | " : " & ")
+          tmpOutput
+            .filter(
+              (value, index, self) =>
+                self.indexOf(value) === index
+            )
+            .join(key === "route" ? " | " : " & ")
         )
       }
     }

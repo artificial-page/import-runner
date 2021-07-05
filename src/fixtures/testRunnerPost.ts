@@ -12,12 +12,9 @@ export default async (
     fn2Input: boolean
   }
 ): Promise<
-  ({ id: string; x?: boolean } & { id: string } & (
-      | { id: string }
-      | { id: string }
-    ) & { id: string }) & { id: string; x?: boolean } & {
+  ({ id: string; x?: boolean } & { id: string } & {
     id: string
-  } & { id: string }
+  }) & { id: string; x?: boolean } & { id: string }
 > => {
   return await importRunner({
     input,
