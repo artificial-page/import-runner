@@ -57,7 +57,7 @@ export default ({
       const inputType = inputIndent + inputBody
 
       const outputMatch = match[2].match(
-        /\):\n? ?( *)(Promise<)?(.+)$/s
+        /^\):\n? ?( *)(Promise<)?(.+)$/ms
       )
 
       const outputBody = trimReturns(
