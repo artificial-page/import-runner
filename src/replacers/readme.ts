@@ -142,7 +142,12 @@ export function processFlow({
           } = functionData
 
           const relPath = relative(pathDirname, srcRootPath)
-          const srcPath = relative(srcRootPath, importPath)
+          const srcPath = relative(
+            importPath[0] === "."
+              ? pathDirname
+              : srcRootPath,
+            importPath
+          )
           const relSrcPath = join(relPath, srcPath)
           const simplePath = srcPath.replace(/\.tsx?$/, "")
           const tocAnchor = `${breadcrumbs} > ${simplePath}`
