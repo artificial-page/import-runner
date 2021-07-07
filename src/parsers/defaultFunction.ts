@@ -25,7 +25,7 @@ export default ({
 
   if (fnMatch) {
     const headMatch = fnMatch[3].match(
-      /(.+)((>) => {|(}>) => {|(}) => {|(}) {|(}>) {)\n\s{2}/s
+      /(.+)((>) => {|(}>) => {|(}) => {|(}) {|(}>) {)\n\s{2}[^\s]/s
     )
 
     const head =
@@ -57,7 +57,7 @@ export default ({
       const inputType = inputIndent + inputBody
 
       const outputMatch = match[2].match(
-        /^\):\n? ?( *)(Promise<)?(.+)$/ms
+        /\):\n? ?( *)(Promise<)?(.+)$/s
       )
 
       const outputBody = trimReturns(
