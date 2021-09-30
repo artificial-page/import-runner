@@ -441,7 +441,11 @@ export function flowDataTypes({
               (value, index, self) =>
                 self.indexOf(value) === index
             )
-            .join(key === "route" ? " | " : " & ")
+            .join(
+              key === "route" && style !== "RawOutType"
+                ? " | "
+                : " & "
+            )
         )
       }
     }
