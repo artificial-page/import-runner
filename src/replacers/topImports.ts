@@ -1,4 +1,7 @@
-import { ReplacementOutputType } from "file-replacer"
+import {
+  ReplacementType,
+  ReplacementsType,
+} from "file-replacer"
 
 export const regex = /^\s*(import(.+)(?=\n{2}))/gms
 
@@ -8,7 +11,7 @@ export default ({
 }: {
   imports: string[]
   data: string
-}): ReplacementOutputType => {
+}): ReplacementsType => {
   const blocks = data
     .split("\n\n")
     .filter((str) => str.match(/^import/m))
@@ -27,9 +30,11 @@ export default ({
   return imports
     .slice()
     .reverse()
-    .map((str): ReplacementOutputType[0] => ({
-      search: lastBlock,
-      replace: lastBlock + "\n" + str,
-      condition: (body) => !body.includes(str),
-    }))
+    .map(
+      (str): ReplacementType => ({
+        search: lastBlock,
+        replace: lastBlock + "\n" + str,
+        condition: (body) => !body.includes(str),
+      })
+    )
 }

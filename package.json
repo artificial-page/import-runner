@@ -22,27 +22,27 @@
   "homepage": "https://github.com/artificial-page/import-runner#readme",
   "devDependencies": {
     "@artificial-page/util-types": "0.0.2",
-    "@types/eslint": "7.2.11",
-    "@types/fs-extra": "9.0.11",
-    "@types/mocha": "8.2.2",
-    "@types/node": "15.6.0",
-    "@types/prettier": "2.3.0",
-    "@typescript-eslint/eslint-plugin": "4.25.0",
-    "@typescript-eslint/parser": "4.25.0",
-    "eslint": "7.27.0",
+    "@types/eslint": "7.28.0",
+    "@types/fs-extra": "9.0.13",
+    "@types/mocha": "9.0.0",
+    "@types/node": "16.10.2",
+    "@types/prettier": "2.4.1",
+    "@typescript-eslint/eslint-plugin": "4.32.0",
+    "@typescript-eslint/parser": "4.32.0",
+    "eslint": "7.32.0",
     "eslint-config-prettier": "8.3.0",
-    "eslint-plugin-prettier": "3.4.0",
-    "expect": "26.6.2",
-    "file-replacer": "0.6.0",
+    "eslint-plugin-prettier": "4.0.0",
+    "expect": "27.2.4",
+    "file-replacer": "0.7.0",
     "fs-extra": "10.0.0",
-    "husky": "6.0.0",
+    "husky": "7.0.2",
     "io-type": "0.1.0",
-    "lint-staged": "11.0.0",
-    "mocha": "8.4.0",
-    "npm-check-updates": "11.5.13",
-    "prettier": "2.3.0",
-    "source-map-support": "0.5.19",
-    "typescript": "4.2.4"
+    "lint-staged": "11.1.2",
+    "mocha": "9.1.2",
+    "npm-check-updates": "11.8.5",
+    "prettier": "2.4.1",
+    "source-map-support": "0.5.20",
+    "typescript": "4.4.3"
   },
   "lint-staged": {
     "*.{css,json,md}": [
@@ -55,7 +55,7 @@
     ]
   },
   "dependencies": {
-    "tslib": "2.2.0",
+    "tslib": "2.3.1",
     "un": "0.0.0"
   }
 }
