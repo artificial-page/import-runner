@@ -436,15 +436,9 @@ export function flowDataTypes({
       }
 
       if (tmpOutput.length) {
-        const or = key === "route" && style !== "RawOutType"
-
         output.push(
           tmpOutput
             .filter((value, index, self) => {
-              if (or) {
-                return true
-              }
-
               const match = value.match(/^\s+([^&|]+)$/)
 
               if (match) {
@@ -458,7 +452,11 @@ export function flowDataTypes({
 
               return self.indexOf(value) === index
             })
-            .join(or ? " | " : " & ")
+            .join(
+              key === "route" && style !== "RawOutType"
+                ? " | "
+                : " & "
+            )
         )
       }
     }
