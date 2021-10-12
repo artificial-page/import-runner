@@ -452,7 +452,12 @@ export function flowDataTypes({
                   lines.push(value)
                 }
               }
-              return self.indexOf(value) === index
+              if (self.indexOf(value) === index) {
+                lines.push(value)
+                return true
+              } else {
+                return false
+              }
             })
             .join(or ? " | " : " & ")
         )
