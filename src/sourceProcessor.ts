@@ -363,6 +363,7 @@ export function flowDataTypes({
     | "OutType"
 }): string {
   const output: string[] = []
+  const lines: string[] = []
 
   for (const key in flowData) {
     if (
@@ -435,17 +436,26 @@ export function flowDataTypes({
       }
 
       if (tmpOutput.length) {
+        const or = key === "route" && style !== "RawOutType"
         output.push(
           tmpOutput
-            .filter(
-              (value, index, self) =>
-                self.indexOf(value) === index
-            )
-            .join(
-              key === "route" && style !== "RawOutType"
-                ? " | "
-                : " & "
-            )
+            .filter((value, index, self) => {
+              if (or) {
+                return true
+              }
+
+              const match = value.match(/\s+(.+)/)
+
+              if (match) {
+                if (lines.includes(match[1])) {
+                  return false
+                } else {
+                  lines.push(match[1])
+                  return true
+                }
+              }
+            })
+            .join(or ? " | " : " & ")
         )
       }
     }
