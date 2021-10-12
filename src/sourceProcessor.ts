@@ -352,9 +352,11 @@ export async function processFlow({
 
 export function flowDataTypes({
   flowData,
+  lines,
   style,
 }: {
   flowData: FlowDataType
+  lines?: string[]
   style:
     | "RawInType"
     | "RawOutType"
@@ -363,7 +365,8 @@ export function flowDataTypes({
     | "OutType"
 }): string {
   const output: string[] = []
-  const lines: string[] = []
+
+  lines = lines || []
 
   for (const key in flowData) {
     if (
@@ -427,6 +430,7 @@ export function flowDataTypes({
         } else {
           const types = flowDataTypes({
             flowData: data,
+            lines,
             style,
           })
           if (types) {
@@ -436,22 +440,21 @@ export function flowDataTypes({
       }
 
       if (tmpOutput.length) {
+        const or = key === "route" && style !== "RawOutType"
+
         output.push(
           tmpOutput
             .filter((value, index, self) => {
-              if (lines.includes(value)) {
-                return false
-              } else {
-                lines.push(value)
+              if (!or) {
+                if (lines.includes(value)) {
+                  return false
+                } else {
+                  lines.push(value)
+                }
               }
-
               return self.indexOf(value) === index
             })
-            .join(
-              key === "route" && style !== "RawOutType"
-                ? " | "
-                : " & "
-            )
+            .join(or ? " | " : " & ")
         )
       }
     }
