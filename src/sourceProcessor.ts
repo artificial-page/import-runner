@@ -439,15 +439,10 @@ export function flowDataTypes({
         output.push(
           tmpOutput
             .filter((value, index, self) => {
-              const match = value.match(/^\s+([^&|]+)$/)
-
-              if (match) {
-                if (lines.includes(match[1])) {
-                  return false
-                } else {
-                  lines.push(match[1])
-                  return true
-                }
+              if (lines.includes(value)) {
+                return false
+              } else {
+                lines.push(value)
               }
 
               return self.indexOf(value) === index
